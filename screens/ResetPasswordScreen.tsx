@@ -18,8 +18,8 @@ const ResetPasswordScreen: React.FC = ({}) => {
   const navigation = useNavigation<RootStackNavigationProp<'resetPassword'>>();
   const [email, setEmail] = useState<string>('');
 
-  const createPasswordScreen = () => {
-    navigation.navigate('createNewPassword');
+  const moveToCheckMailScreen = () => {
+    navigation.navigate('checkMailPopUp');
   };
   return (
     <ImageBackground
@@ -42,7 +42,7 @@ const ResetPasswordScreen: React.FC = ({}) => {
         <View style={styles.inputWrapper}>
           <TouchableOpacity
             style={styles.resetPasswordButton}
-            onPress={createPasswordScreen}
+            onPress={moveToCheckMailScreen}
             activeOpacity={0.7}>
             <Text style={styles.resetPasswordText}>Reset Password</Text>
           </TouchableOpacity>
