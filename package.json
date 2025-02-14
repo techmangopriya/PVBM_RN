@@ -24,7 +24,8 @@
     "react-native-screens": "^4.6.0",
     "react-native-splash-screen": "^3.3.0",
     "react-native-ttsbutton": "^0.1.2",
-    "react-native-vector-icons": "^10.2.0"
+    "react-native-vector-icons": "^10.2.0",
+    "react-native-webview": "^13.13.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

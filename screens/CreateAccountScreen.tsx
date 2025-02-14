@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   ImageBackground,
   View,
@@ -7,12 +7,13 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  Linking
 } from 'react-native';
-import {ScrollView, TextInput} from 'react-native-gesture-handler';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import CheckBox from 'react-native-check-box';
-import {RootStackNavigationProp} from '../App';
+import { RootStackNavigationProp } from '../App';
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const CreateAccountScreen: React.FC = () => {
   const navigation = useNavigation<RootStackNavigationProp<'createAccount'>>();
@@ -22,6 +23,11 @@ const CreateAccountScreen: React.FC = () => {
     console.log("Navigating to accountCreatedPopUp...");  
     navigation.navigate('accountCreatedPopUp');
   };
+
+  const openURL = (url: string) => {
+    Linking.openURL(url).catch(err => console.error("Couldn't open URL", err));
+  };
+
   return (
     <ScrollView>
       <ImageBackground
@@ -60,15 +66,24 @@ const CreateAccountScreen: React.FC = () => {
 
           <View style={styles.checkboxContainer}>
             <CheckBox
-              leftText="CheckBox"
               style={styles.checkbox}
               isChecked={isSelected}
               onClick={() => setSelection(!isSelected)}
               checkBoxColor="#7559CC"
             />
             <Text style={styles.label}>
-              You agree to our Terms and Conditions and Privacy Policy
+              I hereby agree to Terms and Conditions and Privacy Policy
             </Text>
+          </View>
+
+          <View style={styles.linkContainer}>
+          <TouchableOpacity onPress={() => navigation.navigate('webPage', { url: 'https://pvbm.net/terms-condition' })}>
+            <Text style={styles.linkText}>Terms & Conditions</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('webPage', { url: 'https://pvbm.net/privacy-policy' })}>
+            <Text style={styles.linkText}>Privacy Policy</Text>
+          </TouchableOpacity>
           </View>
         </View>
 
@@ -81,7 +96,7 @@ const CreateAccountScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
       </ImageBackground>
-    </ScrollView>
+    </ScrollView>               
   );
 };
 
@@ -112,12 +127,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 16,
+    flexWrap: 'wrap',
   },
   checkbox: {
     marginRight: 8,
+    marginTop: 3,
   },
   label: {
-    color: '#333',
+    fontSize: 14,
+    color: '#333',    
+    flex: 1,
+    lineHeight: 18,
+  },
+  linkContainer: {
+    flexDirection: 'row', 
+    justifyContent: 'space-between',
+    width: '90%',  
+    marginTop: 12,
+    paddingHorizontal: 20,
+  },
+  linkText: {
+    color: '#7559CC',
+    textDecorationLine: 'underline', 
+    fontSize: 14,
   },
   buttonContainer: {
     alignItems: 'center',

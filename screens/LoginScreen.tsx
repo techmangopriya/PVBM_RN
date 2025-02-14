@@ -31,13 +31,18 @@ const LoginScreen : React.FC= () => {
   const [password, setPassword] = useState<string>('');
   const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
 
-  const nextScreen = () => {
+  const moveToResetScreen = () => {
     navigation.navigate('resetPassword')
   }
 
-  const createAccountScreen = () => {
+  const moveToAccountScreen = () => {
     navigation.navigate('createAccount')
   }
+
+  const moveToHomeScreen = () => {
+    navigation.navigate('homeScreen');
+  };
+
   return (
 
     <KeyboardAvoidingView 
@@ -89,16 +94,16 @@ const LoginScreen : React.FC= () => {
           </View>
 
           <TouchableOpacity>
-            <Text style={styles.forgotPassword} onPress={nextScreen}>Forgot Password?</Text>
+            <Text style={styles.forgotPassword} onPress={moveToResetScreen}>Forgot Password?</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.signInButton}>
+          <TouchableOpacity style={styles.signInButton} onPress={moveToHomeScreen}>
             <Text style={styles.signInText}>Sign in</Text>
           </TouchableOpacity>
 
           <View style={styles.createAccountContainer}>
             <Text style={styles.createAccount}>Don't have an account? </Text>
-            <TouchableOpacity onPress={createAccountScreen}>
+            <TouchableOpacity onPress={moveToAccountScreen}>
               <Text style={styles.createAccountLink}>Create Account</Text>
             </TouchableOpacity>
           </View>
