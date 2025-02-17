@@ -1,29 +1,91 @@
-import React from "react";
-import { Dimensions, View, StyleSheet } from 'react-native'
-import { Text } from "react-native-gesture-handler";
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 
-const { width, height } = Dimensions.get('screen')
+const categories = ['Categories', 'Videos', 'Audios', 'Documents'];
+const { width, height } = Dimensions.get('screen');
 
 const HomeScreen: React.FC = () => {
-return (
-<View style={styles.container}>
-  <Text style={styles.libraryTextCont}>Library</Text>
-</View>
-);
+  const [selectedCategory, setSelectedCategory] = useState<string>('Categories');
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.libraryTextCont}>Library</Text>
+
+      <View style={styles.segmentContainer}>
+        {categories.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[
+              styles.segmentButton,
+              selectedCategory === item && styles.selectedSegment,
+            ]}
+            onPress={() => setSelectedCategory(item)} >
+            <Text
+              style={[
+                styles.segmentText,
+                selectedCategory === item && styles.selectedText,
+              ]} >
+              {item}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <View style={styles.content}>
+        <Text style={styles.contentText}>Selected: {selectedCategory}</Text>
+      </View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-container: {
+  container: {
     width: width,
     height: height,
     backgroundColor: 'white',
-},
-libraryTextCont: {
+    padding: 10,
+  },
+  libraryTextCont: {
     textAlign: 'left',
     color: 'black',
     fontSize: 34,
-    fontWeight: 'bold'
-}
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  segmentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    marginHorizontal: 10,
+    padding: 5,
+  },
+  segmentButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  selectedSegment: {
+    backgroundColor: '#8B5CF6',
+    borderRadius: 10,
+  },
+  segmentText: {
+    fontSize: 14,
+    color: 'black',
+    fontWeight: '600',
+  },
+  selectedText: {
+    color: 'white',
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  contentText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });
 
 export default HomeScreen;

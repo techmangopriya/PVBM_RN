@@ -6,19 +6,26 @@
  */
 
 import React, {useState} from 'react';
-import {Dimensions} from 'react-native';
+import {Dimensions, StyleSheet, Image} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {StackNavigationProp} from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Ionicons';
+
+
+// Screens
 import LoginScreen from './screens/LoginScreen';
 import ResetPasswordScreen from './screens/ResetPasswordScreen';
-import {StackNavigationProp} from '@react-navigation/stack';
 import CreateNewPassword from './screens/CreateNewPassword';
 import CreateAccountScreen from './screens/CreateAccountScreen';
 import AccountCreatedPopUpScreen from './screens/AccountCreatedPopUpScreen';
-import CheckMailPopUpScreen from './screens/CheckMailPopUpScreen';
+import CheckMailPopUpScreen from './screens/CheckMailPopUpScreen'; 
 import WebPageScreen from './screens/WebPageScreen';
 import HomeScreen from './screens/HomeScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import FeedScreen from './screens/FeedScreen';
 
 type RootStackParamList = {
   login: undefined;
@@ -35,7 +42,52 @@ export type RootStackNavigationProp<T extends keyof RootStackParamList> =
   StackNavigationProp<RootStackParamList, T>;
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const Tab =  createBottomTabNavigator();
 const {width, height} = Dimensions.get('screen');
+
+const BottomTabs: React.FC = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused }) => {
+          let iconSource;
+
+          switch (route.name) {
+            case 'Library':
+              iconSource = require('./assets/images/ic_Library.png');
+              break;
+            case 'Feed':
+              iconSource = require('./assets/images/Play.png');
+              break;
+            case 'Profile':
+              iconSource = require('./assets/images/Profile.png');
+              break;
+          }
+
+          return (
+            <Image
+              source={iconSource}
+              style={{
+                width: 25,
+                height: 25,
+                tintColor: focused ? '#8B5CF6' : 'gray', // Optional color change
+              }}
+              resizeMode="contain"
+            />
+          );
+        },
+        tabBarActiveTintColor: '#8B5CF6',
+        tabBarInactiveTintColor: 'gray',
+        tabBarLabelStyle: { fontSize: 12, fontWeight: 'bold' },
+      })}
+    >
+      <Tab.Screen name="Library" component={HomeScreen} />
+      <Tab.Screen name="Feed" component={FeedScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
+  );
+};
+
 
 const App: React.FC = () => {
   return (
@@ -81,11 +133,19 @@ const App: React.FC = () => {
             }}
           />
           <Stack.Screen name="webPage" component={WebPageScreen} options={{ title: ''}} />
-          <Stack.Screen name='homeScreen' component={HomeScreen} options={{ title: ''}} />
+          <Stack.Screen name="homeScreen" component={BottomTabs} options={{ headerShown: false , title: ""}} />
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
   );
 };
 
+const styles = StyleSheet.create ({
+icon: {
+  width: 25,
+  height: 25,
+  resizeMode: 'contain',
+}
+
+});
 export default App;

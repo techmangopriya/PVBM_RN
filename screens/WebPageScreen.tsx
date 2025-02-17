@@ -10,13 +10,8 @@ const WebPageScreen: React.FC = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <TouchableOpacity
-        // onPress={() => navigation.goBack()}
-        // style={{ padding: 10, backgroundColor: 'gray', alignItems: 'center' }}
-      >
-        {/* <Text style={{ color: 'white' }}>Back</Text> */}
+      <TouchableOpacity >
       </TouchableOpacity>
-
       <WebView source={{ uri: url }} style={{ flex: 1 }} />
     </View>
   );

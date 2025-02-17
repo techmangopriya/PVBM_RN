@@ -81,7 +81,7 @@ const CreateAccountScreen: React.FC = () => {
             <Text style={styles.linkText}>Terms & Conditions</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate('webPage', { url: 'https://pvbm.net/privacy-policy' })}>
+          <TouchableOpacity onPress={() => navigation.navigate('webPage', { url: 'https://pvbm.net/privacy-policy' } )}>
             <Text style={styles.linkText}>Privacy Policy</Text>
           </TouchableOpacity>
           </View>
