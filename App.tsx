@@ -14,7 +14,6 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-
 // Screens
 import LoginScreen from './screens/LoginScreen';
 import ResetPasswordScreen from './screens/ResetPasswordScreen';
@@ -31,7 +30,7 @@ type RootStackParamList = {
   login: undefined;
   resetPassword: undefined;
   createNewPassword: undefined;
-  createAccount: undefined;
+  createAccount: undefined;                        
   accountCreatedPopUp: undefined;
   checkMailPopUp: undefined;
   webPage: {url: string};
@@ -70,7 +69,7 @@ const BottomTabs: React.FC = () => {
               style={{
                 width: 25,
                 height: 25,
-                tintColor: focused ? '#8B5CF6' : 'gray', // Optional color change
+                tintColor: focused ? '#8B5CF6' : 'gray', 
               }}
               resizeMode="contain"
             />

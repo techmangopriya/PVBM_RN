@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 
 const categories = ['Categories', 'Videos', 'Audios', 'Documents'];
-const { width, height } = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
 const HomeScreen: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('Categories');
-
+  const [selectedCategory, setSelectedCategory] =
+    useState<string>('Categories');
   return (
     <View style={styles.container}>
       <Text style={styles.libraryTextCont}>Library</Text>
@@ -19,12 +25,12 @@ const HomeScreen: React.FC = () => {
               styles.segmentButton,
               selectedCategory === item && styles.selectedSegment,
             ]}
-            onPress={() => setSelectedCategory(item)} >
+            onPress={() => setSelectedCategory(item)}>
             <Text
               style={[
                 styles.segmentText,
                 selectedCategory === item && styles.selectedText,
-              ]} >
+              ]}>
               {item}
             </Text>
           </TouchableOpacity>
