@@ -25,6 +25,7 @@ import WebPageScreen from './screens/WebPageScreen';
 import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import FeedScreen from './screens/FeedScreen';
+import EditProfileScreen from './screens/EditProfileScreen';
 
 type RootStackParamList = {
   login: undefined;
@@ -33,8 +34,9 @@ type RootStackParamList = {
   createAccount: undefined;                        
   accountCreatedPopUp: undefined;
   checkMailPopUp: undefined;
-  webPage: {url: string};
+  webPage: { url: string; title?: string };
   homeScreen: undefined;
+  editProfile: undefined;
 };
 
 export type RootStackNavigationProp<T extends keyof RootStackParamList> =
@@ -133,6 +135,7 @@ const App: React.FC = () => {
           />
           <Stack.Screen name="webPage" component={WebPageScreen} options={{ title: ''}} />
           <Stack.Screen name="homeScreen" component={BottomTabs} options={{ headerShown: false , title: ""}} />
+          <Stack.Screen name='editProfile' component={EditProfileScreen} options={{title: "Edit Profile"}} />
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>

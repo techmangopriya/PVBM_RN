@@ -7,18 +7,18 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {BlurView} from '@react-native-community/blur';
+// import {BlurView} from '@react-native-community/blur';
 
 const {width, height} = Dimensions.get('screen');
 
 const CheckMailPopUpScreen: React.FC = () => {
   return (
     <View style={styles.container}>
-      <BlurView
+      {/* <BlurView
         style={styles.absoluteBlur}
         blurType="materialLight"
         blurAmount={2}
-      />
+      /> */}
       <View style={styles.popViewContainer}>
         <Image
           source={require('../assets/images/Message.png')}

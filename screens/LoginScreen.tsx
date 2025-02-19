@@ -136,22 +136,33 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 32,
     borderBottomRightRadius: 0,
     borderBottomLeftRadius: 0,  
-    shadowOffset: {width: 0,height: 4},
-    shadowOpacity:0.2,
-    shadowColor: '#000',
-    shadowRadius: 6,
     alignItems: 'center',
-    elevation: 5, 
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 6,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   loginContainer: {
-     backgroundColor: 'clear',
-    width: '100%',
-    padding: 20,
-     borderRadius: 20,
-    elevation: 5,
-    marginBottom: 100,
-    
-  },
+   backgroundColor: 'white',
+   width: '100%',
+   padding: 20,
+   marginBottom: 100,
+   ...Platform.select({
+    android: {
+   elevation: 6,
+    },
+    ios: {
+      borderRadius: 0,
+    }
+   })
+},
   loginTitle: {
     fontSize: 20,
     fontWeight: 'bold',

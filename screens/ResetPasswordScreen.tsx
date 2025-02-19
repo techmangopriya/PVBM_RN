@@ -19,6 +19,7 @@ const ResetPasswordScreen: React.FC = ({}) => {
   const [email, setEmail] = useState<string>('');
 
   const moveToCheckMailScreen = () => {
+    console.log('click button')
     navigation.navigate('checkMailPopUp');
   };
   return (

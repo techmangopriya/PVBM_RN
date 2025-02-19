@@ -6,13 +6,15 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackNavigationProp } from '../App';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackNavigationProp} from '../App';
+import {ScrollView} from 'react-native-gesture-handler';
 
-
+const {width, height} = Dimensions.get('screen');
 
 const DATA = [
   {
@@ -30,11 +32,13 @@ const DATA = [
     id: '3',
     title: 'Terms & Conditions',
     leftIcon: require('../assets/images/Terms.png'),
+    url: 'https://pvbm.net/terms-condition',
   },
   {
     id: '4',
     title: 'Privacy Policy',
     leftIcon: require('../assets/images/Privacy.png'),
+    url: 'https://pvbm.net/privacy-policy',
   },
   {
     id: '5',
@@ -45,6 +49,7 @@ const DATA = [
     id: '6',
     title: 'About Us',
     leftIcon: require('../assets/images/AboutUs.png'),
+    url: 'https://pvbm.net/aboutus',
   },
   {id: '7', title: 'Logout', leftIcon: require('../assets/images/Logout.png')},
 ];
@@ -52,14 +57,19 @@ const DATA = [
 const rightArrow = require('../assets/images/RightArrow.png');
 
 const ProfileScreen = () => {
+  const navigation = useNavigation<RootStackNavigationProp<'editProfile'>>();
 
-  // const navigation = useNavigation<NavigationProp>();
+  const moveToEditProfile = () => {
+    navigation.navigate('editProfile');
+  };
 
-  // const handlePress = (item: { id: string; screen?: keyof RootStackParamList }) => {
-  //   if (item.screen) {
-  //     navigation.navigate(item.screen as keyof RootStackParamList);
-  //   }
-  // };
+  const handleNavigation = (item: {screen?: string; url?: string, title?: string}) => {
+    if (item.screen) {
+      navigation.navigate(item.screen as never);
+    } else if (item.url) {
+      navigation.navigate('webPage', { url: item.url, title: item.title });
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -71,7 +81,7 @@ const ProfileScreen = () => {
         <View>
           <Text style={styles.profileName}>UserName</Text>
           <Text style={styles.profileEmail}>pvbm@gmail.com</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={moveToEditProfile}>
             <Text style={styles.editProfile}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
@@ -81,16 +91,23 @@ const ProfileScreen = () => {
         data={DATA}
         keyExtractor={item => item.id}
         renderItem={({item}) => (
-          // <TouchableOpacity onPress={() => handlePress(item)}>
-          <View style={styles.itemContainer}>
+          <TouchableOpacity
+            onPress={() => handleNavigation(item)}
+            style={styles.itemContainer}>
             <Image source={item.leftIcon} style={styles.leftImage} />
             <Text style={styles.text}>{item.title}</Text>
             <Image source={rightArrow} style={styles.rightImage} />
-          </View>
-          // </TouchableOpacity>
+          </TouchableOpacity>
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
+      <View style={styles.footerView}>
+        <Text style={styles.footerText}>Powered By</Text>
+        <Image
+          style={styles.footerImage}
+          source={require('../assets/images/TechmangoLogo.png')}
+        />
+      </View>
     </View>
   );
 };
@@ -152,6 +169,27 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#E0E0E0',
     marginHorizontal: 20,
+  },
+  footerView: {
+    backgroundColor: '#F8F8FA',
+    width: width,
+    height: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+    marginBottom: 50,
+  },
+  footerImage: {
+    justifyContent: 'center',
+    height: 60,
+    width: 300,
+    marginVertical: 20,
+  },
+  footerText: {
+    color: 'purple',
+    textAlign: 'center',
+    fontSize: 16,
+    marginVertical: 20,
   },
 });
 
