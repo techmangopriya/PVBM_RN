@@ -6,7 +6,7 @@
  */
 
 import React, {useState} from 'react';
-import {Dimensions, StyleSheet, Image} from 'react-native';
+import {Dimensions, StyleSheet, Image, SafeAreaView, Platform} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -48,11 +48,12 @@ const {width, height} = Dimensions.get('screen');
 
 const BottomTabs: React.FC = () => {
   return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}> 
     <Tab.Navigator
       screenOptions={({ route }) => ({
+        headerShown: false,
         tabBarIcon: ({ focused }) => {
           let iconSource;
-
           switch (route.name) {
             case 'Library':
               iconSource = require('./assets/images/ic_Library.png');
@@ -64,7 +65,6 @@ const BottomTabs: React.FC = () => {
               iconSource = require('./assets/images/Profile.png');
               break;
           }
-
           return (
             <Image
               source={iconSource}
@@ -86,6 +86,7 @@ const BottomTabs: React.FC = () => {
       <Tab.Screen name="Feed" component={FeedScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
+    </SafeAreaView>
   );
 };
 
@@ -98,23 +99,31 @@ const App: React.FC = () => {
           <Stack.Screen
             name="login"
             component={LoginScreen}
-            options={{headerShown: false}}
-          />
+            options={{headerShown: false,
+            headerBackTitle: '',
+            headerTintColor: 'black'
+            }}/>
           <Stack.Screen
             name="resetPassword"
             component={ResetPasswordScreen}
-            options={{title: 'Reset Password'}}
-          />
+            options={{title: 'Reset Password',
+            headerBackTitle: '',
+            headerTintColor: 'black'
+          }}/>
           <Stack.Screen
             name="createNewPassword"
             component={CreateNewPassword}
-            options={{title: 'Create New Password'}}
-          />
+            options={{title: 'Create New Password',
+            headerBackTitle: '',
+            headerTintColor: 'black'
+          }}/>
           <Stack.Screen
             name="createAccount"
             component={CreateAccountScreen}
-            options={{title: 'Create Account'}}
-          />
+            options={{title: 'Create Account',
+            headerBackTitle: '',
+            headerTintColor: 'black'
+          }}/>
           <Stack.Screen
             name="accountCreatedPopUp"
             component={AccountCreatedPopUpScreen}
@@ -122,8 +131,9 @@ const App: React.FC = () => {
               presentation: 'fullScreenModal',
               title: '',
               headerShown: false,
-            }}
-          />
+              headerBackTitle: '',
+              headerTintColor: 'black'
+            }}/>
           <Stack.Screen
             name="checkMailPopUp"
             component={CheckMailPopUpScreen}
@@ -131,11 +141,14 @@ const App: React.FC = () => {
               presentation: 'fullScreenModal',
               title: '',
               headerShown: false,
-            }}
-          />
-          <Stack.Screen name="webPage" component={WebPageScreen} options={{ title: ''}} />
-          <Stack.Screen name="homeScreen" component={BottomTabs} options={{ headerShown: false , title: ""}} />
-          <Stack.Screen name='editProfile' component={EditProfileScreen} options={{title: "Edit Profile"}} />
+              headerBackTitle: '',
+              headerTintColor: 'black'
+            }}/>
+          <Stack.Screen name="webPage" component={WebPageScreen} options={{ title: '', headerBackTitle: '',
+            headerTintColor: 'black' }}/>
+          <Stack.Screen name="homeScreen" component={BottomTabs} options={{ headerShown: false , title: '', headerBackTitle: '',
+            headerTintColor: 'black'} }/>
+            <Stack.Screen name='editProfile' component={EditProfileScreen} options={{title: 'Edit Profile'}}/>
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>

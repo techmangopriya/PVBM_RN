@@ -8,10 +8,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
-
+import {RootStackNavigationProp} from '../App';
+import {useNavigation} from '@react-navigation/native';
 const {width, height} = Dimensions.get('screen');
 
-const EditProfileScreen: React.FC = () => {
+const EditProfileScreen: React.FC = () => {  
   return (
     <ScrollView>
       <ImageBackground

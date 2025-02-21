@@ -5,8 +5,8 @@
  * @format
  */
 
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import {useNavigation} from '@react-navigation/native';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -18,13 +18,13 @@ import {
   Dimensions,
   ScrollView,
 } from 'react-native';
-import { RootStackNavigationProp } from '../App';
-import { KeyboardAvoidingView, Platform } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {RootStackNavigationProp} from '../App';
+import {KeyboardAvoidingView, Platform} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-const { width, height } = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
-const LoginScreen : React.FC= () => {
+const LoginScreen: React.FC = () => {
   const navigation = useNavigation<RootStackNavigationProp<'createAccount'>>();
 
   const [email, setEmail] = useState<string>('');
@@ -32,86 +32,97 @@ const LoginScreen : React.FC= () => {
   const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
 
   const moveToResetScreen = () => {
-    navigation.navigate('resetPassword')
-  }
+    navigation.navigate('resetPassword');
+  };
 
   const moveToAccountScreen = () => {
-    navigation.navigate('createAccount')
-  }
+    navigation.navigate('createAccount');
+  };
 
   const moveToHomeScreen = () => {
     navigation.navigate('homeScreen');
   };
 
   return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{flex: 1}}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={{flexGrow: 1}}
+        enableOnAndroid={true}
+        keyboardShouldPersistTaps="handled">
+        <ScrollView>
+          <ImageBackground
+            style={styles.imgBackGround}
+            source={require('../assets/images/BG.png')}>
+            <View
+              style={{
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: width,
+              }}>
+              <Image
+                style={styles.logo}
+                source={require('../assets/images/logo.png')}
+              />
+            </View>
 
-    <KeyboardAvoidingView 
-    behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
-    style={{ flex: 1 }}
-  >
-    <KeyboardAwareScrollView 
-      contentContainerStyle={{ flexGrow: 1 }} 
-      enableOnAndroid={true}
-      keyboardShouldPersistTaps="handled"
-    >
-    <ScrollView>
-    <ImageBackground
-      style={styles.imgBackGround}
-      source={require('../assets/images/BG.png')} 
-    >
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', width: width }}>
-        <Image
-          style={styles.logo}
-          source={require('../assets/images/logo.png')} 
-        />
-      </View>
+            <View style={styles.container}>
+              <View style={styles.loginContainer}>
+                <Text style={styles.loginTitle}>Login</Text>
 
-      <View style={styles.container}>
-        <View style={styles.loginContainer}>
-          <Text style={styles.loginTitle}>Login</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  placeholderTextColor="#aaa"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#aaa"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    style={styles.passwordInput}
+                    placeholder="Password"
+                    placeholderTextColor="#aaa"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={secureTextEntry}
+                  />
+                  <TouchableOpacity
+                    onPress={() => setSecureTextEntry(!secureTextEntry)}>
+                    {/* <Icon name={secureTextEntry ? "eye-off" : "eye"} size={20} color="#aaa" /> */}
+                  </TouchableOpacity>
+                </View>
 
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="Password"
-              placeholderTextColor="#aaa"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={secureTextEntry}
-            />
-            <TouchableOpacity onPress={() => setSecureTextEntry(!secureTextEntry)}>
-              {/* <Icon name={secureTextEntry ? "eye-off" : "eye"} size={20} color="#aaa" /> */}
-            </TouchableOpacity>
-          </View>
+                <TouchableOpacity>
+                  <Text
+                    style={styles.forgotPassword}
+                    onPress={moveToResetScreen}>
+                    Forgot Password?
+                  </Text>
+                </TouchableOpacity>
 
-          <TouchableOpacity>
-            <Text style={styles.forgotPassword} onPress={moveToResetScreen}>Forgot Password?</Text>
-          </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.signInButton}
+                  onPress={moveToHomeScreen}>
+                  <Text style={styles.signInText}>Sign in</Text>
+                </TouchableOpacity>
 
-          <TouchableOpacity style={styles.signInButton} onPress={moveToHomeScreen}>
-            <Text style={styles.signInText}>Sign in</Text>
-          </TouchableOpacity>
-
-          <View style={styles.createAccountContainer}>
-            <Text style={styles.createAccount}>Don't have an account? </Text>
-            <TouchableOpacity onPress={moveToAccountScreen}>
-              <Text style={styles.createAccountLink}>Create Account</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-      </ImageBackground> 
-    </ScrollView>
-    </KeyboardAwareScrollView>
+                <View style={styles.createAccountContainer}>
+                  <Text style={styles.createAccount}>
+                    Don't have an account?{' '}
+                  </Text>
+                  <TouchableOpacity onPress={moveToAccountScreen}>
+                    <Text style={styles.createAccountLink}>Create Account</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </ImageBackground>
+        </ScrollView>
+      </KeyboardAwareScrollView>
     </KeyboardAvoidingView>
   );
 };
@@ -135,12 +146,12 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     borderBottomRightRadius: 0,
-    borderBottomLeftRadius: 0,  
+    borderBottomLeftRadius: 0,
     alignItems: 'center',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
+        shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.2,
         shadowRadius: 6,
       },
@@ -150,19 +161,19 @@ const styles = StyleSheet.create({
     }),
   },
   loginContainer: {
-   backgroundColor: 'white',
-   width: '100%',
-   padding: 20,
-   marginBottom: 100,
-   ...Platform.select({
-    android: {
-   elevation: 6,
-    },
-    ios: {
-      borderRadius: 0,
-    }
-   })
-},
+    backgroundColor: 'white',
+    width: '100%',
+    padding: 20,
+    marginBottom: 100,
+    ...Platform.select({
+      android: {
+        elevation: 6,
+      },
+      ios: {
+        borderRadius: 0,
+      },
+    }),
+  },
   loginTitle: {
     fontSize: 20,
     fontWeight: 'bold',

@@ -20,7 +20,6 @@ const CreateAccountScreen: React.FC = () => {
   const [isSelected, setSelection] = useState(false);
 
   const accountCreatedPopUpScreen = () => {
-    console.log("Navigating to accountCreatedPopUp...");  
     navigation.navigate('accountCreatedPopUp');
   };
 
@@ -77,11 +76,11 @@ const CreateAccountScreen: React.FC = () => {
           </View>
 
           <View style={styles.linkContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate('webPage', { url: 'https://pvbm.net/terms-condition' })}>
+          <TouchableOpacity onPress={() => navigation.navigate('webPage', { url: 'https://pvbm.net/terms-condition', title: 'Terms & Conditions' },)}>
             <Text style={styles.linkText}>Terms & Conditions</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate('webPage', { url: 'https://pvbm.net/privacy-policy' } )}>
+          <TouchableOpacity onPress={() => navigation.navigate('webPage', { url: 'https://pvbm.net/privacy-policy', title: 'Privacy Policy' } )}>
             <Text style={styles.linkText}>Privacy Policy</Text>
           </TouchableOpacity>
           </View>

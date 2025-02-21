@@ -57,9 +57,10 @@ const DATA = [
 const rightArrow = require('../assets/images/RightArrow.png');
 
 const ProfileScreen = () => {
-  const navigation = useNavigation<RootStackNavigationProp<'editProfile'>>();
+  const navigation = useNavigation<RootStackNavigationProp<'homeScreen'>>();
 
   const moveToEditProfile = () => {
+    console.log('Navigating to Edit Profile');
     navigation.navigate('editProfile');
   };
 
@@ -72,6 +73,8 @@ const ProfileScreen = () => {
   };
 
   return (
+      <View style={styles.headerContainer}>
+      <Text style={styles.header}>Profile</Text>
     <View style={styles.container}>
       <View style={styles.profileContainer}>
         <Image
@@ -81,12 +84,12 @@ const ProfileScreen = () => {
         <View>
           <Text style={styles.profileName}>UserName</Text>
           <Text style={styles.profileEmail}>pvbm@gmail.com</Text>
-          <TouchableOpacity onPress={moveToEditProfile}>
+          <TouchableOpacity onPress={moveToEditProfile} activeOpacity={0.7}>
             <Text style={styles.editProfile}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
       </View>
-
+    
       <FlatList
         data={DATA}
         keyExtractor={item => item.id}
@@ -108,6 +111,7 @@ const ProfileScreen = () => {
           source={require('../assets/images/TechmangoLogo.png')}
         />
       </View>
+    </View>
     </View>
   );
 };
@@ -177,7 +181,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 20,
-    marginBottom: 50,
+    marginBottom: 20,
+    marginLeft: 0,
   },
   footerImage: {
     justifyContent: 'center',
@@ -190,6 +195,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     marginVertical: 20,
+  },
+  headerContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingTop: 20,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });
 

@@ -7,18 +7,12 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-// import {BlurView} from '@react-native-community/blur';
 
 const {width, height} = Dimensions.get('screen');
 
 const AccountCreatedPopUpScreen: React.FC = () => {
   return (
     <View style={styles.container}>
-      {/* <BlurView
-        style={styles.absoluteBlur}
-        blurType='materialLight'
-        blurAmount={2}
-      /> */}
       <View style={styles.popViewContainer}>
         <Image
           source={require('../assets/images/TickSquare.png')}
