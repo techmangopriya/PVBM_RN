@@ -17,10 +17,13 @@ import {
   ImageBackground,
   Dimensions,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {RootStackNavigationProp} from '../App';
 import {KeyboardAvoidingView, Platform} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import axios, {AxiosError} from 'axios';
+import DeviceInfo from 'react-native-device-info';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -30,6 +33,86 @@ const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /\S+@\S+\.\S+/;
+    return emailRegex.test(email);
+  };
+
+  interface LoginResponse {
+    success: boolean;
+    message?: string;
+    token?: string;
+  }
+
+  const handleLogin = async () => {
+    if (!validateEmail(email)) {
+      Alert.alert('Login Error', 'Enter a valid email');
+      return;
+    }
+
+    if (password.length < 8) {
+      Alert.alert('Login Error', 'Password must be at least 8 characters long');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const deviceModel = DeviceInfo.getModel();
+      const systemVersion = DeviceInfo.getSystemVersion();
+      const pushToken = '';
+        // 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzIyZDhhMThhMDZjODVhNDM4ZDA3Y2UiLCJ1c2VyUm9sZSI6Im51bGwiLCJpYXQiOjE3MzYwNjEzMzcsImV4cCI6MTczNjIzNDEzNywiYXVkIjoiNjMyMmQ4YTE4YTA2Yzg1YTQzOGQwN2NlIiwiaXNzIjoiYmJyYXVuIn0.yNB3WFTFavXHFegfLRFARNGDOwdRkxkpE5BN1bnr66Q';
+      //  await getPushToken();
+
+      console.log(`Email: '${email}'`);
+      console.log(`Password: '${password}'`);
+
+      const parameters = {
+        email,
+        password,
+        deviceInfo: {
+          pushToken,
+          osVersion: systemVersion,
+          deviceModel,
+          osType: Platform.OS,
+        },
+      };
+      const response = await axios.post(
+        'https://pvbm.net:3000/api/v1/user/login',
+        parameters,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+  
+      console.log('API Response:', response.data);
+
+      if (response?.status == 200 || response.data?.success === "true") {
+        Alert.alert('Success', response.data?.message || 'Login successful');
+        navigation.navigate('homeScreen');
+      } else {
+        Alert.alert(
+          'Login Failed',
+          response.data?.message || 'Invalid credentials'
+        );
+      }
+    } catch (error) {
+      console.log('API Error:', error);
+
+      if (axios.isAxiosError(error)) {
+        console.log('Error Response:', error.response?.data);
+        Alert.alert(
+          'Error',
+          error.response?.data?.message ||
+            'Something went wrong. Please try again later.',
+        );
+      } else {
+        Alert.alert('Error', 'Unexpected error occurred.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const moveToResetScreen = () => {
     navigation.navigate('resetPassword');
@@ -38,11 +121,6 @@ const LoginScreen: React.FC = () => {
   const moveToAccountScreen = () => {
     navigation.navigate('createAccount');
   };
-
-  const moveToHomeScreen = () => {
-    navigation.navigate('homeScreen');
-  };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -106,7 +184,7 @@ const LoginScreen: React.FC = () => {
 
                 <TouchableOpacity
                   style={styles.signInButton}
-                  onPress={moveToHomeScreen}>
+                  onPress={handleLogin}>
                   <Text style={styles.signInText}>Sign in</Text>
                 </TouchableOpacity>
 
@@ -156,7 +234,7 @@ const styles = StyleSheet.create({
         shadowRadius: 6,
       },
       android: {
-        elevation: 6,
+        elevation: 8,
       },
     }),
   },
@@ -200,10 +278,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderColor: '#E2E3E4',
     borderWidth: 0.5,
+    paddingHorizontal: 12,
   },
   passwordInput: {
     flex: 1,
     color: '#333',
+    minHeight: 40,
   },
   forgotPassword: {
     color: '#7559CC',
