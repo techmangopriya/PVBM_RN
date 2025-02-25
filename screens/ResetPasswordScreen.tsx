@@ -21,6 +21,11 @@ const ResetPasswordScreen: React.FC = ({}) => {
   const moveToCheckMailScreen = () => {
     navigation.navigate('checkMailPopUp');
   };
+
+  const moveToOtpScreen = () => {
+    navigation.navigate('otpEntry')
+  };
+
   return (
     <ImageBackground
       style={styles.imgBackGround}
@@ -42,7 +47,7 @@ const ResetPasswordScreen: React.FC = ({}) => {
         <View style={styles.inputWrapper}>
           <TouchableOpacity
             style={styles.resetPasswordButton}
-            onPress={moveToCheckMailScreen}
+            onPress={moveToOtpScreen}
             activeOpacity={0.7}>
             <Text style={styles.resetPasswordText}>Reset Password</Text>
           </TouchableOpacity>

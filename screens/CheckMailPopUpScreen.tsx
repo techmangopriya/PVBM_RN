@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Dimensions,
   View,
@@ -6,12 +6,29 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackNavigationProp } from '../App';
 
 const {width, height} = Dimensions.get('screen');
 
 const CheckMailPopUpScreen: React.FC = () => {
+  const navigation = useNavigation<RootStackNavigationProp<'login'>>();
+  const [modalVisible, setModalVisible] = useState(true);
+
+  const handleClose = () => {
+    setModalVisible(false);
+    // navigation.navigate('login');
+  };
+
   return (
+    <Modal
+    animationType='none'
+    transparent={false}
+    visible={modalVisible}
+    onRequestClose={handleClose}
+    >
     <View style={styles.container}>
       <View style={styles.popViewContainer}>
         <Image
@@ -22,11 +39,12 @@ const CheckMailPopUpScreen: React.FC = () => {
         <Text style={styles.subText}>
           We have sent a password recover instructions to your email.
         </Text>
-        <TouchableOpacity style={styles.closeButton}>
+        <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
           <Text style={styles.closeText}>Close</Text>
         </TouchableOpacity>
       </View>
     </View>
+    </Modal>
   );
 };
 
@@ -35,14 +53,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: 'rgba(0,0,0,0.2)',
   },
-  absoluteBlur: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  popViewContainer: {
+  popViewContainer: { 
     backgroundColor: 'white',
-    width: 327,
+    width: width * 0.8,
     height: 298,
     borderRadius: 16,
     alignItems: 'center',

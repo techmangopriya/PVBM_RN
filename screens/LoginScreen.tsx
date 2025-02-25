@@ -62,7 +62,7 @@ const LoginScreen: React.FC = () => {
     try {
       const deviceModel = DeviceInfo.getModel();
       const systemVersion = DeviceInfo.getSystemVersion();
-      const pushToken = '';
+      const pushToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzIyZDhhMThhMDZjODVhNDM4ZDA3Y2UiLCJ1c2VyUm9sZSI6Im51bGwiLCJpYXQiOjE3MzYwNjEzMzcsImV4cCI6MTczNjIzNDEzNywiYXVkIjoiNjMyMmQ4YTE4YTA2Yzg1YTQzOGQwN2NlIiwiaXNzIjoiYmJyYXVuIn0.yNB3WFTFavXHFegfLRFARNGDOwdRkxkpE5BN1bnr66Q';
         // 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzIyZDhhMThhMDZjODVhNDM4ZDA3Y2UiLCJ1c2VyUm9sZSI6Im51bGwiLCJpYXQiOjE3MzYwNjEzMzcsImV4cCI6MTczNjIzNDEzNywiYXVkIjoiNjMyMmQ4YTE4YTA2Yzg1YTQzOGQwN2NlIiwiaXNzIjoiYmJyYXVuIn0.yNB3WFTFavXHFegfLRFARNGDOwdRkxkpE5BN1bnr66Q';
       //  await getPushToken();
 

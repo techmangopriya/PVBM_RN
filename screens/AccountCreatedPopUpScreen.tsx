@@ -1,4 +1,5 @@
-import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
 import {
   Dimensions,
   View,
@@ -6,12 +7,27 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
+import { RootStackNavigationProp } from '../App';
 
 const {width, height} = Dimensions.get('screen');
 
 const AccountCreatedPopUpScreen: React.FC = () => {
+  const navigation = useNavigation<RootStackNavigationProp<'login'>>();
+ const [modalVisible,setModalVisible] = useState(true);
+ 
+ const handleClose = () => {
+  setModalVisible(false);
+ }
+
   return (
+    <Modal
+    animationType='none'
+    transparent={false}
+    visible={modalVisible}
+    onRequestClose={handleClose}
+    >
     <View style={styles.container}>
       <View style={styles.popViewContainer}>
         <Image
@@ -20,11 +36,12 @@ const AccountCreatedPopUpScreen: React.FC = () => {
         />
         <Text style={styles.baseText}>Your Account is Created</Text>
         <Text style={styles.subText}>Please Login now Thanks</Text>
-        <TouchableOpacity style={styles.closeButton}>
+        <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
           <Text style={styles.closeText}>Close</Text>
         </TouchableOpacity>
       </View>
     </View>
+    </Modal>
   );
 };
 
@@ -33,14 +50,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
-  absoluteBlur: {
-    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.1)',
   },
   popViewContainer: {
     backgroundColor: 'white',
-    width: 327,
+    width: width * 0.8,
     height: 298,
     borderRadius: 16,
     alignItems: 'center',

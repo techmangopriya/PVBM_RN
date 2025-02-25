@@ -26,6 +26,7 @@ import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import FeedScreen from './screens/FeedScreen';
 import EditProfileScreen from './screens/EditProfileScreen';
+import OTPScreen from './screens/OTPScreen';
 
 type RootStackParamList = {
   login: undefined;
@@ -37,6 +38,7 @@ type RootStackParamList = {
   webPage: { url: string; title?: string };
   homeScreen: undefined;
   editProfile: undefined;
+  otpEntry: undefined;
 };
 
 export type RootStackNavigationProp<T extends keyof RootStackParamList> =
@@ -149,6 +151,7 @@ const App: React.FC = () => {
           <Stack.Screen name="homeScreen" component={BottomTabs} options={{ headerShown: false , title: '', headerBackTitle: '',
             headerTintColor: 'black'} }/>
             <Stack.Screen name='editProfile' component={EditProfileScreen} options={{title: 'Edit Profile'}}/>
+            <Stack.Screen name='otpEntry' component={OTPScreen} options={{title: "Verify OTP"}}/>
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
