@@ -24,6 +24,8 @@ import {KeyboardAvoidingView, Platform} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import axios, {AxiosError} from 'axios';
 import DeviceInfo from 'react-native-device-info';
+import {LoginResponseModel} from './types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -39,12 +41,6 @@ const LoginScreen: React.FC = () => {
     const emailRegex = /\S+@\S+\.\S+/;
     return emailRegex.test(email);
   };
-
-  interface LoginResponse {
-    success: boolean;
-    message?: string;
-    token?: string;
-  }
 
   const handleLogin = async () => {
     if (!validateEmail(email)) {
@@ -62,13 +58,9 @@ const LoginScreen: React.FC = () => {
     try {
       const deviceModel = DeviceInfo.getModel();
       const systemVersion = DeviceInfo.getSystemVersion();
-      const pushToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzIyZDhhMThhMDZjODVhNDM4ZDA3Y2UiLCJ1c2VyUm9sZSI6Im51bGwiLCJpYXQiOjE3MzYwNjEzMzcsImV4cCI6MTczNjIzNDEzNywiYXVkIjoiNjMyMmQ4YTE4YTA2Yzg1YTQzOGQwN2NlIiwiaXNzIjoiYmJyYXVuIn0.yNB3WFTFavXHFegfLRFARNGDOwdRkxkpE5BN1bnr66Q';
-        // 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzIyZDhhMThhMDZjODVhNDM4ZDA3Y2UiLCJ1c2VyUm9sZSI6Im51bGwiLCJpYXQiOjE3MzYwNjEzMzcsImV4cCI6MTczNjIzNDEzNywiYXVkIjoiNjMyMmQ4YTE4YTA2Yzg1YTQzOGQwN2NlIiwiaXNzIjoiYmJyYXVuIn0.yNB3WFTFavXHFegfLRFARNGDOwdRkxkpE5BN1bnr66Q';
+      const pushToken = '';
+      // 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzIyZDhhMThhMDZjODVhNDM4ZDA3Y2UiLCJ1c2VyUm9sZSI6Im51bGwiLCJpYXQiOjE3MzYwNjEzMzcsImV4cCI6MTczNjIzNDEzNywiYXVkIjoiNjMyMmQ4YTE4YTA2Yzg1YTQzOGQwN2NlIiwiaXNzIjoiYmJyYXVuIn0.yNB3WFTFavXHFegfLRFARNGDOwdRkxkpE5BN1bnr66Q';
       //  await getPushToken();
-
-      console.log(`Email: '${email}'`);
-      console.log(`Password: '${password}'`);
-
       const parameters = {
         email,
         password,
@@ -79,21 +71,30 @@ const LoginScreen: React.FC = () => {
           osType: Platform.OS,
         },
       };
-      const response = await axios.post(
+      const response = await axios.post<LoginResponseModel>(
         'https://pvbm.net:3000/api/v1/user/login',
         parameters,
-        { headers: { 'Content-Type': 'application/json' } }
+        {headers: {'Content-Type': 'application/json'}},
       );
-  
+
       console.log('API Response:', response.data);
 
-      if (response?.status == 200 || response.data?.success === "true") {
+      if (response?.status == 200 || response.data?.message === 'true') {
         Alert.alert('Success', response.data?.message || 'Login successful');
+
+        if (response.data.accessToken) {
+          const userDetails = {
+            name: response.data.data?.name,
+            email: response.data.data?.email,
+          };
+
+          await AsyncStorage.setItem('AppUser', JSON.stringify(userDetails));
+        }
         navigation.navigate('homeScreen');
       } else {
         Alert.alert(
           'Login Failed',
-          response.data?.message || 'Invalid credentials'
+          response.data?.message || 'Invalid credentials',
         );
       }
     } catch (error) {

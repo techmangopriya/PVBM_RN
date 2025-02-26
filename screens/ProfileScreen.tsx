@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState,useCallback} from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,10 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackNavigationProp} from '../App';
 import {ScrollView} from 'react-native-gesture-handler';
+import axios,{AxiosError} from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppUser } from './types';
+import { useFocusEffect } from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -43,7 +47,7 @@ const DATA = [
   {
     id: '5',
     title: 'Tell a Friend',
-    leftIcon: require('../assets/images/ReferFriends.png'),
+    leftIcon: require('../assets/images/ReferFriends.png'),                                 
   },
   {
     id: '6',
@@ -59,19 +63,47 @@ const rightArrow = require('../assets/images/RightArrow.png');
 const ProfileScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp<'homeScreen'>>();
 
+  const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+
+
+  useFocusEffect(
+    useCallback(() => {
+      const getUserDetails = async () => {
+        try {
+          const userData = await AsyncStorage.getItem('AppUser');
+          if (userData) {
+            const user = JSON.parse(userData);
+            setName(user.name || 'User Name');
+            setEmail(user.email || 'example@example.com');
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      };
+
+      getUserDetails();
+    }, [])
+  );
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('AppUser');
+    navigation.navigate('login'); 
+  };
+
   const moveToEditProfile = () => {
     console.log('Navigating to Edit Profile');
     navigation.navigate('editProfile');
   };
-
   const handleNavigation = (item: {screen?: string; url?: string, title?: string}) => {
-    if (item.screen) {
+    if (item.title == 'Logout') {
+      handleLogout();
+    } else if (item.screen) {
       navigation.navigate(item.screen as never);
     } else if (item.url) {
       navigation.navigate('webPage', { url: item.url, title: item.title });
     }
   };
-
   return (
       <View style={styles.headerContainer}>
       <Text style={styles.header}>Profile</Text>
@@ -82,8 +114,8 @@ const ProfileScreen = () => {
           style={styles.profileImage}
         />
         <View>
-          <Text style={styles.profileName}>UserName</Text>
-          <Text style={styles.profileEmail}>pvbm@gmail.com</Text>
+          <Text style={styles.profileName}>{name}</Text>
+          <Text style={styles.profileEmail}>{email}</Text>
           <TouchableOpacity onPress={moveToEditProfile} activeOpacity={0.7}>
             <Text style={styles.editProfile}>Edit Profile</Text>
           </TouchableOpacity>

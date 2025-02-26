@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import React, {useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {
   ImageBackground,
   View,
@@ -7,22 +7,111 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Linking
+  Linking,
+  Platform,
+  Alert,
 } from 'react-native';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import CheckBox from 'react-native-check-box';
-import { RootStackNavigationProp } from '../App';
+import {RootStackNavigationProp} from '../App';
+import axios, {AxiosError} from 'axios';
+import { AppUser, LoginResponseModel } from './types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const { width, height } = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
 const CreateAccountScreen: React.FC = () => {
   const navigation = useNavigation<RootStackNavigationProp<'createAccount'>>();
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [mobile, setMobile] = useState('');
   const [isSelected, setSelection] = useState(false);
 
-  const accountCreatedPopUpScreen = () => {
-    navigation.navigate('accountCreatedPopUp');
-  };
+  const validateEmail = (email: string): boolean => /\S+@\S+\.\S+/.test(email);
+  const validatePhone = (phone: string): boolean => /^[0-9]{10}$/.test(phone);
 
+  const registerUser = async () => {
+    if (!name) return Alert.alert('Create an Account', 'Enter Name');
+    if (password.length < 8)
+      return Alert.alert(
+        'Create an Account',
+        'Enter Password with at least 8 characters',
+      );
+    if (confirmPassword.length < 8)
+      return Alert.alert(
+        'Create an Account',
+        'Enter Confirm Password with at least 8 characters',
+      );
+    if (password !== confirmPassword)
+      return Alert.alert('Create an Account', "Confirm Password Doesn't match");
+    if (!validateEmail(email))
+      return Alert.alert('Create an Account', 'Enter a valid Email');
+    if (!validatePhone(mobile.trim()))
+      return Alert.alert(
+        'Create an Account',
+        'Enter valid Mobile Number with at least 10 digits',
+      );
+    if (!isSelected)
+      return Alert.alert(
+        'Create an Account',
+        'Please accept the Terms and Conditions',
+      );
+
+    try {
+      const parameters: Record<string, any> = {
+        email,
+        password,
+        name,
+        deviceInfo: {
+          pushToken: '',
+          osVersion: Platform.Version,
+          deviceModel: Platform.OS,
+          osType: 'ios',
+        },
+      };
+      const response = await axios.post<LoginResponseModel>(
+        'https://pvbm.net:3000/api/v1/user/register',
+        parameters,
+        {headers: {'Content-Type': 'application/json'}},
+      );
+      console.log('API Response:', response.data);
+
+      if (response?.status == 200 || response.data?.message == 'true') {
+        Alert.alert('Success', response.data?.message || 'Login successful');
+        
+        if (response.data.accessToken) {
+          const userDetails = {
+            name: response.data.data?.name,
+            email: response.data.data?.email,
+          };
+          await AsyncStorage.setItem('AppUser', JSON.stringify(userDetails));
+      }
+        navigation.navigate('homeScreen');
+      } else {
+        Alert.alert(
+          'Login Failed',
+          response.data?.message || 'Invalid credentials',
+        );
+      }
+    } catch (error) {
+      console.log('API Error:', error);
+
+      if (axios.isAxiosError(error)) {
+        console.log('Error Response:', error.response?.data);
+        Alert.alert(
+          'Error',
+          error.response?.data?.message ||
+            'Something went wrong. Please try again later.',
+        );
+      } else {
+        Alert.alert('Error', 'Unexpected error occurred.');
+      }
+    } finally {
+    }
+  };
   const openURL = (url: string) => {
     Linking.openURL(url).catch(err => console.error("Couldn't open URL", err));
   };
@@ -37,30 +126,40 @@ const CreateAccountScreen: React.FC = () => {
             style={styles.nameInput}
             placeholder="Name"
             placeholderTextColor="#838795"
+            value={name}
+            onChangeText={setName}
           />
           <TextInput
             style={styles.nameInput}
             placeholder="Password"
             placeholderTextColor="#838795"
             secureTextEntry
+            value={password}
+            onChangeText={setPassword}
           />
           <TextInput
             style={styles.nameInput}
             placeholder="Confirm Password"
             placeholderTextColor="#838795"
             secureTextEntry
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
           />
           <TextInput
             style={styles.nameInput}
             placeholder="Email"
             placeholderTextColor="#838795"
             keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
           />
           <TextInput
             style={styles.nameInput}
             placeholder="Mobile no"
             placeholderTextColor="#838795"
             keyboardType="phone-pad"
+            value={mobile}
+            onChangeText={setMobile}
           />
 
           <View style={styles.checkboxContainer}>
@@ -76,26 +175,38 @@ const CreateAccountScreen: React.FC = () => {
           </View>
 
           <View style={styles.linkContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate('webPage', { url: 'https://pvbm.net/terms-condition', title: 'Terms & Conditions' },)}>
-            <Text style={styles.linkText}>Terms & Conditions</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('webPage', {
+                  url: 'https://pvbm.net/terms-condition',
+                  title: 'Terms & Conditions',
+                })
+              }>
+              <Text style={styles.linkText}>Terms & Conditions</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate('webPage', { url: 'https://pvbm.net/privacy-policy', title: 'Privacy Policy' } )}>
-            <Text style={styles.linkText}>Privacy Policy</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('webPage', {
+                  url: 'https://pvbm.net/privacy-policy',
+                  title: 'Privacy Policy',
+                })
+              }>
+              <Text style={styles.linkText}>Privacy Policy</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.submitButton}
-            onPress={accountCreatedPopUpScreen}
+            onPress={registerUser}
             activeOpacity={0.7}>
             <Text style={styles.submitText}>Submit</Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>
-    </ScrollView>               
+    </ScrollView>
   );
 };
 
@@ -134,20 +245,20 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: '#333',    
+    color: '#333',
     flex: 1,
     lineHeight: 18,
   },
   linkContainer: {
-    flexDirection: 'row', 
+    flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '90%',  
+    width: '90%',
     marginTop: 12,
     paddingHorizontal: 20,
   },
   linkText: {
     color: '#7559CC',
-    textDecorationLine: 'underline', 
+    textDecorationLine: 'underline',
     fontSize: 14,
   },
   buttonContainer: {
