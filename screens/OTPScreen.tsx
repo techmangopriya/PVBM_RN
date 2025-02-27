@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, Text, ImageBackground, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { OtpInput } from 'react-native-otp-entry';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { RootStackNavigationProp } from '../App';
 
 const { width, height } = Dimensions.get('screen');
 
 const OTPScreen: React.FC = () => {
-    const navigation = useNavigation<RootStackNavigationProp<'checkMailPopUp'>>();
-    const moveToCheckMail = () => {
-        navigation.navigate('checkMailPopUp')
+    const navigation = useNavigation<RootStackNavigationProp<'createNewPassword'>>();
+    const moveToCreateNewPassword = () => {
+        navigation.navigate('createNewPassword')
     }
   return (
     <ImageBackground source={require('../assets/images/BG.png')} style={styles.imgBackGround}>
@@ -31,11 +31,11 @@ const OTPScreen: React.FC = () => {
       </View>
       <View style={styles.container}>
         <Text style={styles.infoText}>Didn't receive the code?</Text>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} >
           <Text style={styles.buttonText}>Re-send code</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.continueButton} onPress={moveToCheckMail}>
+      <TouchableOpacity style={styles.continueButton} onPressIn={moveToCreateNewPassword}>
           <Text style={styles.continueText}>Continue</Text>
         </TouchableOpacity>
     </ImageBackground>

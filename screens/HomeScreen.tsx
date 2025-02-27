@@ -25,7 +25,7 @@ const HomeScreen: React.FC = () => {
               styles.segmentButton,
               selectedCategory === item && styles.selectedSegment,
             ]}
-            onPress={() => setSelectedCategory(item)}>
+            onPressIn={() => setSelectedCategory(item)}>
             <Text
               style={[
                 styles.segmentText,

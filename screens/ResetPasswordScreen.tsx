@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
-import {TTSButton} from 'react-native-ttsbutton'
+import {TTSButton} from 'react-native-ttsbutton';
 import {
   Dimensions,
   ImageBackground,
@@ -8,22 +8,75 @@ import {
   View,
   TouchableOpacity,
   Text,
+  Alert,
 } from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
 import {RootStackNavigationProp} from '../App';
+import axios, {AxiosError} from 'axios';
+import {LoginResponseModel, ResetPasswordResponseModel} from './types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {width, height} = Dimensions.get('screen');
 
 const ResetPasswordScreen: React.FC = ({}) => {
-  const navigation = useNavigation<RootStackNavigationProp<'resetPassword'>>();
-  const [email, setEmail] = useState<string>('');
+  const navigation = useNavigation<RootStackNavigationProp<'checkMailPopUp'>>();
 
-  const moveToCheckMailScreen = () => {
-    navigation.navigate('checkMailPopUp');
+  const [emailId, setEmail] = useState<string>('');
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /\S+@\S+\.\S+/;
+    return emailRegex.test(email);
   };
 
-  const moveToOtpScreen = () => {
-    navigation.navigate('otpEntry')
+  const apiCall = async () => {
+    if (!validateEmail(emailId)) {
+      Alert.alert('Reset Password', 'Enter a Valid email');
+    }
+
+    try {
+      const response = await axios.get<ResetPasswordResponseModel>(
+        'https://pvbm.net:3000/api/v1/user/forgotPassword', 
+        {
+          headers: {'Content-Type': 'application/json'},
+          params: {
+            emailId: emailId, 
+          },
+        }
+      );
+
+      console.log('API Reset Response:', response.data);
+
+      if (response.status === 200 || response.data.message === 'true') {
+        Alert.alert('Success', response.data.message || '');
+
+        if (response.data.data) {
+          const otpDetails = {
+            otp: response.data.data.otp,
+          };
+          await AsyncStorage.setItem('OTPData', JSON.stringify(otpDetails));
+        }
+        navigation.navigate('checkMailPopUp');
+      } else {
+        Alert.alert(
+          'Reset Password Failed',
+          response.data.message || 'Invalid email',
+        );
+      }
+    } catch (error) {
+      console.log('API Reset Error:', error);
+
+      if (axios.isAxiosError(error)) {
+        console.log('Error Response:', error.response?.data);
+        Alert.alert(
+          'Error',
+          error.response?.data?.message ||
+            'Something went wrong. Please try again later.',
+        );
+      } else {
+        Alert.alert('Error', 'Unexpected error occurred.');
+      }
+    } finally {
+    }
   };
 
   return (
@@ -42,12 +95,14 @@ const ResetPasswordScreen: React.FC = ({}) => {
             placeholder="Email"
             placeholderTextColor="#838795"
             keyboardType="email-address"
+            value={emailId}
+            onChangeText={setEmail}
           />
         </View>
         <View style={styles.inputWrapper}>
           <TouchableOpacity
             style={styles.resetPasswordButton}
-            onPress={moveToOtpScreen}
+            onPress={apiCall}
             activeOpacity={0.7}>
             <Text style={styles.resetPasswordText}>Reset Password</Text>
           </TouchableOpacity>

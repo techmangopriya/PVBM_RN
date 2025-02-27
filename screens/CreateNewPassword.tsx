@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ImageBackground,
   View,
@@ -6,12 +6,69 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Dimensions
+  Dimensions,
+  Alert
 } from 'react-native';
-
+import axios, { AxiosError } from 'axios';
+import { RootStackNavigationProp } from '../App';
+import { useNavigation } from '@react-navigation/native';
+import { ResetPasswordResponseModel } from './types';
 const {width, height} = Dimensions.get('screen');
 
 const CreateNewPassword: React.FC = () => {
+  const navigation = useNavigation<RootStackNavigationProp<'login'>>();
+  const [password, setPassword] = useState<string>('')
+  const [confirmPassword,setConfirmPassword] = useState<string>('')
+  const [secureTextEntry,setSecureTextEntry] = useState<string>('')
+
+  const apiCallCreatePassword = async () => {
+
+    if (password.length < 8){
+      Alert.alert('Create Password', "Password must be at least 8 characters")
+      return;
+    }
+
+    try {
+      const response = await axios.patch<ResetPasswordResponseModel>(
+        'https://pvbm.net:3000/api/v1/user/changePassword', 
+        {
+          headers: {'Content-Type': 'application/json'},
+          params: {
+            password: password, 
+            confirmPassword: confirmPassword,
+          },
+        }
+      );
+
+      console.log('API Change Password Response:', response.data)
+      if (response.status === 200 || response.data.message === 'true') {
+        Alert.alert('Success', response.data.message || '');
+
+        if (response.data.data) {
+        }
+        navigation.navigate('login');
+      } else {
+        Alert.alert(
+          'Change Password Failed',
+          response.data.message || 'Invalid email',
+        );
+      }
+    } catch (error) {
+      console.log('API Change Password Error:', error);
+
+      if (axios.isAxiosError(error)) {
+        console.log('Error Response:', error.response?.data);
+        Alert.alert(
+          'Error',
+          error.response?.data?.message ||
+            'Something went wrong. Please try again later.',
+        );
+      } else {
+        Alert.alert('Error', 'Unexpected error occurred.');
+      }
+    } finally {
+    }
+  };
   return (
     <ImageBackground
       style={styles.imgBackGround}
@@ -27,12 +84,19 @@ const CreateNewPassword: React.FC = () => {
             style={styles.passwordInput}
             placeholder="Password"
             placeholderTextColor="#838795"
+            value={password}
+            onChangeText={setPassword}
+            // secureTextEntry={secureTextEntry}
           />
           <TextInput
             style={styles.confirmPasswordInput}
             placeholder="New Password"
             placeholderTextColor="#838795"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            // secureTextEntry={secureTextEntry}
           />
+         
         </View>
         <View style={styles.inputWrapper}>
         <TouchableOpacity style={styles.resetPasswordButton}>

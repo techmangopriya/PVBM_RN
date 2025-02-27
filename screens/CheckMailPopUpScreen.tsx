@@ -14,14 +14,18 @@ import { RootStackNavigationProp } from '../App';
 const {width, height} = Dimensions.get('screen');
 
 const CheckMailPopUpScreen: React.FC = () => {
-  const navigation = useNavigation<RootStackNavigationProp<'login'>>();
+  const navigation = useNavigation<RootStackNavigationProp<'otpEntry'>>();
   const [modalVisible, setModalVisible] = useState(true);
 
   const handleClose = () => {
     setModalVisible(false);
-    // navigation.navigate('login');
+    navigation.goBack(); // Dismiss the modal
+    setTimeout(() => {
+      navigation.navigate('otpEntry'); // Navigate to OTP screen
+    }, 100);
   };
-
+  
+  
   return (
     <Modal
     animationType='none'
