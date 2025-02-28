@@ -26,6 +26,7 @@ import axios, {AxiosError} from 'axios';
 import DeviceInfo from 'react-native-device-info';
 import {LoginResponseModel} from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -76,11 +77,14 @@ const LoginScreen: React.FC = () => {
         {headers: {'Content-Type': 'application/json'}},
       );
 
-      console.log('API Response:', response.data);
+      console.log('API Login Response:', response.data);
 
       if (response?.status == 200 || response.data?.message === 'true') {
-        Alert.alert('Success', response.data?.message || 'Login successful');
-
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: response.data?.message || 'Login successful',
+        });
         if (response.data.accessToken) {
           const userDetails = {
             name: response.data.data?.name,
@@ -91,21 +95,23 @@ const LoginScreen: React.FC = () => {
         }
         navigation.navigate('homeScreen');
       } else {
-        Alert.alert(
-          'Login Failed',
-          response.data?.message || 'Invalid credentials',
-        );
+        Toast.show({
+          type: 'success',
+          text1: 'Login Failed',
+          text2: response.data?.message || 'Invalid credentials',
+        });
       }
     } catch (error) {
-      console.log('API Error:', error);
+      console.log('API Login Error:', error);
 
       if (axios.isAxiosError(error)) {
         console.log('Error Response:', error.response?.data);
-        Alert.alert(
-          'Error',
-          error.response?.data?.message ||
-            'Something went wrong. Please try again later.',
-        );
+        Toast.show({
+          type: 'Error',
+          text1: 'Login Failed',
+          text2: error.response?.data?.message ||
+          'Something went wrong. Please try again later.',
+        });
       } else {
         Alert.alert('Error', 'Unexpected error occurred.');
       }

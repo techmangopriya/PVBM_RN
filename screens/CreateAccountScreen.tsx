@@ -15,8 +15,9 @@ import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import CheckBox from 'react-native-check-box';
 import {RootStackNavigationProp} from '../App';
 import axios, {AxiosError} from 'axios';
-import { AppUser, LoginResponseModel } from './types';
+import {AppUser, LoginResponseModel} from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Toast} from 'react-native-toast-message/lib/src/Toast';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -77,35 +78,38 @@ const CreateAccountScreen: React.FC = () => {
         parameters,
         {headers: {'Content-Type': 'application/json'}},
       );
-      console.log('API Response:', response.data);
+      console.log('API Create Account Response:', response.data);
 
       if (response?.status == 200 || response.data?.message == 'true') {
         Alert.alert('Success', response.data?.message || 'Login successful');
-        
+
         if (response.data.accessToken) {
           const userDetails = {
             name: response.data.data?.name,
             email: response.data.data?.email,
           };
           await AsyncStorage.setItem('AppUser', JSON.stringify(userDetails));
-      }
+        }
         navigation.navigate('homeScreen');
       } else {
-        Alert.alert(
-          'Login Failed',
-          response.data?.message || 'Invalid credentials',
-        );
+        Toast.show({
+          type: 'error',
+          text1: 'Create Account Failed',
+          text2: response?.data?.message || 'Invalid credentials',
+        });
       }
     } catch (error) {
-      console.log('API Error:', error);
+      console.log('API Create Account Error:', error);
 
       if (axios.isAxiosError(error)) {
         console.log('Error Response:', error.response?.data);
-        Alert.alert(
-          'Error',
-          error.response?.data?.message ||
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2:
+            error.response?.data?.message ||
             'Something went wrong. Please try again later.',
-        );
+        });
       } else {
         Alert.alert('Error', 'Unexpected error occurred.');
       }
@@ -176,7 +180,7 @@ const CreateAccountScreen: React.FC = () => {
 
           <View style={styles.linkContainer}>
             <TouchableOpacity
-              onPress={() =>
+              onPressIn={() =>
                 navigation.navigate('webPage', {
                   url: 'https://pvbm.net/terms-condition',
                   title: 'Terms & Conditions',
@@ -186,7 +190,7 @@ const CreateAccountScreen: React.FC = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() =>
+              onPressIn={() =>
                 navigation.navigate('webPage', {
                   url: 'https://pvbm.net/privacy-policy',
                   title: 'Privacy Policy',
@@ -200,7 +204,7 @@ const CreateAccountScreen: React.FC = () => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.submitButton}
-            onPress={registerUser}
+            onPressIn={registerUser}
             activeOpacity={0.7}>
             <Text style={styles.submitText}>Submit</Text>
           </TouchableOpacity>

@@ -14,9 +14,10 @@ import { RootStackNavigationProp } from '../App';
 import { useNavigation } from '@react-navigation/native';
 import { ResetPasswordResponseModel } from './types';
 const {width, height} = Dimensions.get('screen');
+import Toast from 'react-native-toast-message';
 
 const CreateNewPassword: React.FC = () => {
-  const navigation = useNavigation<RootStackNavigationProp<'login'>>();
+  const navigation = useNavigation<RootStackNavigationProp<'passwordPopUp'>>();
   const [password, setPassword] = useState<string>('')
   const [confirmPassword,setConfirmPassword] = useState<string>('')
   const [secureTextEntry,setSecureTextEntry] = useState<string>('')
@@ -30,7 +31,7 @@ const CreateNewPassword: React.FC = () => {
 
     try {
       const response = await axios.patch<ResetPasswordResponseModel>(
-        'https://pvbm.net:3000/api/v1/user/changePassword', 
+        'http://34.193.51.13:3000/api/v1/user/changePassword', 
         {
           headers: {'Content-Type': 'application/json'},
           params: {
@@ -42,27 +43,34 @@ const CreateNewPassword: React.FC = () => {
 
       console.log('API Change Password Response:', response.data)
       if (response.status === 200 || response.data.message === 'true') {
-        Alert.alert('Success', response.data.message || '');
-
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: response.data.message || '',
+        });
+        
         if (response.data.data) {
         }
-        navigation.navigate('login');
+        navigation.navigate('passwordPopUp');
       } else {
-        Alert.alert(
-          'Change Password Failed',
-          response.data.message || 'Invalid email',
-        );
+        Toast.show({
+          type: 'error',
+          text1: 'Change Password Failed',
+          text2:   response.data.message || 'Invalid email',
+        });
       }
     } catch (error) {
       console.log('API Change Password Error:', error);
 
       if (axios.isAxiosError(error)) {
         console.log('Error Response:', error.response?.data);
-        Alert.alert(
-          'Error',
-          error.response?.data?.message ||
+        Toast.show({
+          type: 'error',
+          text1: 'Change Password Failed',
+          text2:
+            error.response?.data?.message ||
             'Something went wrong. Please try again later.',
-        );
+        });
       } else {
         Alert.alert('Error', 'Unexpected error occurred.');
       }

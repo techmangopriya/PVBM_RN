@@ -15,6 +15,8 @@ import {RootStackNavigationProp} from '../App';
 import axios, {AxiosError} from 'axios';
 import {LoginResponseModel, ResetPasswordResponseModel} from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
+
 
 const {width, height} = Dimensions.get('screen');
 
@@ -28,11 +30,16 @@ const ResetPasswordScreen: React.FC = ({}) => {
     return emailRegex.test(email);
   };
 
-  const apiCall = async () => {
+  const resetPasswordapiCall = async () => {
+
+    if (emailId.trim() === '') {
+      Alert.alert('Reset Password', 'Email Cannot be empty')
+      return;
+    }
     if (!validateEmail(emailId)) {
       Alert.alert('Reset Password', 'Enter a Valid email');
+      return;
     }
-
     try {
       const response = await axios.get<ResetPasswordResponseModel>(
         'https://pvbm.net:3000/api/v1/user/forgotPassword', 
@@ -47,31 +54,39 @@ const ResetPasswordScreen: React.FC = ({}) => {
       console.log('API Reset Response:', response.data);
 
       if (response.status === 200 || response.data.message === 'true') {
-        Alert.alert('Success', response.data.message || '');
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Password reset email sent successfully!',
+        });
 
         if (response.data.data) {
           const otpDetails = {
             otp: response.data.data.otp,
+            emailId: emailId
           };
-          await AsyncStorage.setItem('OTPData', JSON.stringify(otpDetails));
+          // await AsyncStorage.setItem('OTPData', JSON.stringify(otpDetails));
+          await AsyncStorage.setItem('OTPData', JSON.stringify({emailId: emailId}));
         }
         navigation.navigate('checkMailPopUp');
       } else {
-        Alert.alert(
-          'Reset Password Failed',
-          response.data.message || 'Invalid email',
-        );
+        Toast.show({
+          type: 'error',
+          text1: 'Failed',
+          text2: response.data.message || 'Something went wrong',
+        });
       }
     } catch (error) {
       console.log('API Reset Error:', error);
 
       if (axios.isAxiosError(error)) {
         console.log('Error Response:', error.response?.data);
-        Alert.alert(
-          'Error',
-          error.response?.data?.message ||
-            'Something went wrong. Please try again later.',
-        );
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: error.response?.data?.message ||
+          'Something went wrong. Please try again later.'
+        })
       } else {
         Alert.alert('Error', 'Unexpected error occurred.');
       }
@@ -102,7 +117,7 @@ const ResetPasswordScreen: React.FC = ({}) => {
         <View style={styles.inputWrapper}>
           <TouchableOpacity
             style={styles.resetPasswordButton}
-            onPress={apiCall}
+            onPress={resetPasswordapiCall}
             activeOpacity={0.7}>
             <Text style={styles.resetPasswordText}>Reset Password</Text>
           </TouchableOpacity>

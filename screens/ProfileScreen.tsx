@@ -66,7 +66,6 @@ const ProfileScreen = () => {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
 
-
   useFocusEffect(
     useCallback(() => {
       const getUserDetails = async () => {
