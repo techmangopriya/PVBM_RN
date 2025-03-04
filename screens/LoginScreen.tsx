@@ -33,10 +33,11 @@ const {width, height} = Dimensions.get('screen');
 const LoginScreen: React.FC = () => {
   const navigation = useNavigation<RootStackNavigationProp<'createAccount'>>();
 
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>('priya.dg@techmango.net');
+  const [password, setPassword] = useState<string>('12345677');
   const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
+  const [id,setId] = useState<string>('67af19359c7bab2e36b7a085');
 
   const validateEmail = (email: string) => {
     const emailRegex = /\S+@\S+\.\S+/;
@@ -89,6 +90,8 @@ const LoginScreen: React.FC = () => {
           const userDetails = {
             name: response.data.data?.name,
             email: response.data.data?.email,
+            mobileNo: response.data.data?.mobileNo,
+            id: response.data.data?.id
           };
 
           await AsyncStorage.setItem('AppUser', JSON.stringify(userDetails));

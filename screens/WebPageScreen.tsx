@@ -23,5 +23,4 @@ const WebPageScreen: React.FC = () => {
   );
 };
 
-
 export default WebPageScreen;

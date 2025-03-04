@@ -17,6 +17,7 @@ import axios,{AxiosError} from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppUser } from './types';
 import { useFocusEffect } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -65,6 +66,10 @@ const ProfileScreen = () => {
 
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
+  const [mobileNo, setMobileNo] = useState<string>('');
+  const [id, setId] = useState<string>('');
+
+  const isFocused = useIsFocused();
 
   useFocusEffect(
     useCallback(() => {
@@ -72,28 +77,39 @@ const ProfileScreen = () => {
         try {
           const userData = await AsyncStorage.getItem('AppUser');
           if (userData) {
-            const user = JSON.parse(userData);
+            const user: AppUser = JSON.parse(userData);
             setName(user.name || 'User Name');
             setEmail(user.email || 'example@example.com');
+            setMobileNo(user.mobileNo || '9999999999');
+            setId(user.id || '');
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
       };
-
+  
+      const refresh = navigation.getState().routes.some(
+        (route) =>
+          route.params && typeof route.params === 'object' && 'refresh' in route.params && route.params.refresh
+      );
+  
+      if (refresh) {
+        getUserDetails();
+      }
+  
       getUserDetails();
-    }, [])
+    }, [navigation])
   );
-
+  
   const handleLogout = async () => {
     await AsyncStorage.removeItem('AppUser');
     navigation.navigate('login'); 
   };
 
   const moveToEditProfile = () => {
-    console.log('Navigating to Edit Profile');
-    navigation.navigate('editProfile');
+     navigation.navigate('editProfile', { name : name, email: email, mobileNo: mobileNo, id: id });
   };
+
   const handleNavigation = (item: {screen?: string; url?: string, title?: string}) => {
     if (item.title == 'Logout') {
       handleLogout();
@@ -135,13 +151,13 @@ const ProfileScreen = () => {
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
-      <View style={styles.footerView}>
+      {/* <View style={styles.footerView}>
         <Text style={styles.footerText}>Powered By</Text>
         <Image
           style={styles.footerImage}
           source={require('../assets/images/TechmangoLogo.png')}
         />
-      </View>
+      </View> */}
     </View>
     </View>
   );

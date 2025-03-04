@@ -65,7 +65,6 @@ const ResetPasswordScreen: React.FC = ({}) => {
             otp: response.data.data.otp,
             emailId: emailId
           };
-          // await AsyncStorage.setItem('OTPData', JSON.stringify(otpDetails));
           await AsyncStorage.setItem('OTPData', JSON.stringify({emailId: emailId}));
         }
         navigation.navigate('checkMailPopUp');

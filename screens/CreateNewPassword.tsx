@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   ImageBackground,
   View,
@@ -7,48 +7,79 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
-  Alert
+  Alert,
 } from 'react-native';
-import axios, { AxiosError } from 'axios';
-import { RootStackNavigationProp } from '../App';
-import { useNavigation } from '@react-navigation/native';
-import { ResetPasswordResponseModel } from './types';
+import axios, {AxiosError} from 'axios';
+import {RootStackNavigationProp} from '../App';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {ResetPasswordResponseModel} from './types';
 const {width, height} = Dimensions.get('screen');
 import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CreateNewPassword: React.FC = () => {
   const navigation = useNavigation<RootStackNavigationProp<'passwordPopUp'>>();
-  const [password, setPassword] = useState<string>('')
-  const [confirmPassword,setConfirmPassword] = useState<string>('')
-  const [secureTextEntry,setSecureTextEntry] = useState<string>('')
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [secureTextEntry, setSecureTextEntry] = useState<string>('');
+  const [emailId, setEmail] = useState<string>('');
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchResetEmailId = async () => {
+        try {
+          const resetEmailId = await AsyncStorage.getItem('ResetEmailId');
+          if (resetEmailId) {
+            const {emailId} = JSON.parse(resetEmailId);
+            setEmail(emailId);
+            console.log('Email retrieved:', emailId);
+          }
+        } catch (error) {
+          console.log('Error fetching email:', error);
+        }
+      };
+      fetchResetEmailId();
+    }, []),
+  );
 
   const apiCallCreatePassword = async () => {
-
-    if (password.length < 8){
-      Alert.alert('Create Password', "Password must be at least 8 characters")
+    if (password.length < 8) {
+      Alert.alert('Change Password', 'Password must be at least 8 characters');
       return;
+    }
+
+    if (confirmPassword.length < 8) {
+      Alert.alert(
+        'Change Password',
+        'Confirm Password must be at least 8 characters',
+      );
+      return;
+    }
+
+    if (password != confirmPassword) {
+      Alert.alert('Change Password', "Confirm Password doesn't match");
     }
 
     try {
       const response = await axios.patch<ResetPasswordResponseModel>(
-        'http://34.193.51.13:3000/api/v1/user/changePassword', 
+        'https://pvbm.net:3000/api/v1/user/changePassword',
+        {
+          emailId: emailId,
+          password: password,
+        },
         {
           headers: {'Content-Type': 'application/json'},
-          params: {
-            password: password, 
-            confirmPassword: confirmPassword,
-          },
-        }
+        },
       );
 
-      console.log('API Change Password Response:', response.data)
+      console.log('API Change Password Response:', response.data);
       if (response.status === 200 || response.data.message === 'true') {
         Toast.show({
           type: 'success',
           text1: 'Success',
           text2: response.data.message || '',
         });
-        
+
         if (response.data.data) {
         }
         navigation.navigate('passwordPopUp');
@@ -56,7 +87,7 @@ const CreateNewPassword: React.FC = () => {
         Toast.show({
           type: 'error',
           text1: 'Change Password Failed',
-          text2:   response.data.message || 'Invalid email',
+          text2: response.data.message || 'Invalid email',
         });
       }
     } catch (error) {
@@ -80,8 +111,7 @@ const CreateNewPassword: React.FC = () => {
   return (
     <ImageBackground
       style={styles.imgBackGround}
-      source={require('../assets/images/BG.png')}
-    >
+      source={require('../assets/images/BG.png')}>
       <View style={styles.baseViewStyle}>
         <Text style={styles.forgetText}>
           Your new password must be different from previously used passwords.
@@ -94,7 +124,6 @@ const CreateNewPassword: React.FC = () => {
             placeholderTextColor="#838795"
             value={password}
             onChangeText={setPassword}
-            // secureTextEntry={secureTextEntry}
           />
           <TextInput
             style={styles.confirmPasswordInput}
@@ -102,14 +131,14 @@ const CreateNewPassword: React.FC = () => {
             placeholderTextColor="#838795"
             value={confirmPassword}
             onChangeText={setConfirmPassword}
-            // secureTextEntry={secureTextEntry}
           />
-         
         </View>
         <View style={styles.inputWrapper}>
-        <TouchableOpacity style={styles.resetPasswordButton}>
-          <Text style={styles.resetPasswordText}>Reset Password</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.resetPasswordButton}
+            onPress={apiCallCreatePassword}>
+            <Text style={styles.resetPasswordText}>Reset Password</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>
@@ -174,6 +203,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
-  }
+  },
 });
 export default CreateNewPassword;

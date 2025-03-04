@@ -32,9 +32,10 @@ import WebPageScreen from './screens/WebPageScreen';
 import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import FeedScreen from './screens/FeedScreen';
-import EditProfileScreen from './screens/EditProfileScreen';
 import OTPScreen from './screens/OTPScreen';
 import PasswordCreatedPopUpScreen from './screens/PasswordCreatedPopUpScreen';
+import EditPopUpScreen from './screens/EditPopUpScreen';
+import EditProfileScreen from './screens/EditProfileScreen';
 
 type RootStackParamList = {
   login: undefined;
@@ -44,10 +45,11 @@ type RootStackParamList = {
   accountCreatedPopUp: undefined;
   checkMailPopUp: undefined;
   webPage: {url: string; title?: string};
-  homeScreen: undefined;
-  editProfile: undefined;
+  homeScreen: { refresh: boolean } | undefined;
+  editProfile: { name?: string; email?: string; mobileNo?: string; id?: string };
   otpEntry: undefined;
   passwordPopUp: undefined;
+  editProfilePopup : undefined;
 };
 
 export type RootStackNavigationProp<T extends keyof RootStackParamList> =
@@ -199,8 +201,21 @@ const App: React.FC = () => {
               headerTintColor: 'black'
             }}
           />
+
+         <Stack.Screen
+          name='editProfilePopup'
+          component={EditPopUpScreen}
+          options={{
+            title: "",
+            presentation: 'fullScreenModal',
+            headerShown: false,
+            headerBackTitle: '',
+            headerTintColor: 'black',
+          }}
+          />
+          
         </Stack.Navigator>
-        <Toast />
+        <Toast/>
       </NavigationContainer>
     </GestureHandlerRootView>
   );

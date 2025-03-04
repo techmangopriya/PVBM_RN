@@ -9,6 +9,7 @@ import {
 
 const categories = ['Categories', 'Videos', 'Audios', 'Documents'];
 const {width, height} = Dimensions.get('screen');
+import {RootStackNavigationProp} from '../App'
 
 const HomeScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] =

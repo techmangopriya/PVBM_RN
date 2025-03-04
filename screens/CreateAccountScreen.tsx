@@ -30,6 +30,7 @@ const CreateAccountScreen: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [mobile, setMobile] = useState('');
   const [isSelected, setSelection] = useState(false);
+  const [id,setId] = useState('');
 
   const validateEmail = (email: string): boolean => /\S+@\S+\.\S+/.test(email);
   const validatePhone = (phone: string): boolean => /^[0-9]{10}$/.test(phone);
@@ -87,6 +88,8 @@ const CreateAccountScreen: React.FC = () => {
           const userDetails = {
             name: response.data.data?.name,
             email: response.data.data?.email,
+            mobileNo: response.data.data?.mobileNo,
+            id: response.data.data?.id
           };
           await AsyncStorage.setItem('AppUser', JSON.stringify(userDetails));
         }

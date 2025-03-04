@@ -64,6 +64,13 @@ const OTPScreen: React.FC = () => {
           text2: 'OTP resend sent successfully!',
         });
         setOtp('');
+
+        if (response.data.data) {
+          const resetEmailId = {
+            emailId: emailId
+          };
+          await AsyncStorage.setItem('ResetEmailId', JSON.stringify({emailId: emailId}));
+        }
       } else {
         Toast.show({
           type: 'error',
