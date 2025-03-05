@@ -36,6 +36,7 @@ import OTPScreen from './screens/OTPScreen';
 import PasswordCreatedPopUpScreen from './screens/PasswordCreatedPopUpScreen';
 import EditPopUpScreen from './screens/EditPopUpScreen';
 import EditProfileScreen from './screens/EditProfileScreen';
+import { constantImage } from './utils/images';
 
 type RootStackParamList = {
   login: undefined;
@@ -69,13 +70,13 @@ const BottomTabs: React.FC = () => {
             let iconSource;
             switch (route.name) {
               case 'Library':
-                iconSource = require('./assets/images/ic_Library.png');
+                iconSource = constantImage.libraryIcon;
                 break;
               case 'Feed':
-                iconSource = require('./assets/images/Play.png');
+                iconSource = constantImage.feedIcon;
                 break;
               case 'Profile':
-                iconSource = require('./assets/images/Profile.png');
+                iconSource = constantImage.profileIcon;
                 break;
             }
             return (

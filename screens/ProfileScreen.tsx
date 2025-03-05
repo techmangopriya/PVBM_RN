@@ -18,48 +18,51 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppUser } from './types';
 import { useFocusEffect } from '@react-navigation/native';
 import { useIsFocused } from '@react-navigation/native';
+import { constantString } from '../utils/constantString';
+import { constantImage } from '../utils/images';
+import { appConstants } from '../utils/appConstants.tsx';
 
 const {width, height} = Dimensions.get('screen');
 
 const DATA = [
   {
     id: '1',
-    title: 'Change Password',
-    leftIcon: require('../assets/images/Password.png'),
+    title: constantString.changePassword,
+    leftIcon: constantImage.password,
     screen: 'createNewPassword',
   },
   {
     id: '2',
-    title: 'Push Notifications',
-    leftIcon: require('../assets/images/Notification.png'),
+    title: constantString.pushNotifications,
+    leftIcon: constantImage.pushNotification,
   },
   {
     id: '3',
-    title: 'Terms & Conditions',
-    leftIcon: require('../assets/images/Terms.png'),
-    url: 'https://pvbm.net/terms-condition',
+    title: constantString.termsAndConditions,
+    leftIcon: constantImage.terms,
+    url: appConstants.termsUrl
   },
   {
     id: '4',
-    title: 'Privacy Policy',
-    leftIcon: require('../assets/images/Privacy.png'),
-    url: 'https://pvbm.net/privacy-policy',
+    title: constantString.privacyPolicy,
+    leftIcon: constantImage.privacy,
+    url: appConstants.privacyUrl,
   },
   {
     id: '5',
-    title: 'Tell a Friend',
-    leftIcon: require('../assets/images/ReferFriends.png'),                                 
+    title: constantString.tellaFriend,
+    leftIcon: constantImage.referFriends,                                 
   },
   {
     id: '6',
-    title: 'About Us',
-    leftIcon: require('../assets/images/AboutUs.png'),
-    url: 'https://pvbm.net/aboutus',
+    title: constantString.aboutUs,
+    leftIcon: constantImage.aboutUs,
+    url: appConstants.aboutUsUrl,
   },
-  {id: '7', title: 'Logout', leftIcon: require('../assets/images/Logout.png')},
+  {id: '7', title: constantString.logout, leftIcon: constantImage.logOut},
 ];
 
-const rightArrow = require('../assets/images/RightArrow.png');
+const rightArrow = constantImage.rightArrow;
 
 const ProfileScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp<'homeScreen'>>();
@@ -84,7 +87,7 @@ const ProfileScreen = () => {
             setId(user.id || '');
           }
         } catch (error) {
-          console.error('Error fetching user data:', error);
+          console.error(constantString.errorFetchingUserData, error);
         }
       };
   
@@ -92,11 +95,10 @@ const ProfileScreen = () => {
         (route) =>
           route.params && typeof route.params === 'object' && 'refresh' in route.params && route.params.refresh
       );
-  
       if (refresh) {
         getUserDetails();
       }
-  
+
       getUserDetails();
     }, [navigation])
   );
@@ -111,7 +113,7 @@ const ProfileScreen = () => {
   };
 
   const handleNavigation = (item: {screen?: string; url?: string, title?: string}) => {
-    if (item.title == 'Logout') {
+    if (item.title == constantString.logout) {
       handleLogout();
     } else if (item.screen) {
       navigation.navigate(item.screen as never);
@@ -121,18 +123,18 @@ const ProfileScreen = () => {
   };
   return (
       <View style={styles.headerContainer}>
-      <Text style={styles.header}>Profile</Text>
+      <Text style={styles.header}>{constantString.profile}</Text>
     <View style={styles.container}>
       <View style={styles.profileContainer}>
         <Image
-          source={require('../assets/images/SetProfile.png')}
+          source={constantImage.setProfile}
           style={styles.profileImage}
         />
         <View>
           <Text style={styles.profileName}>{name}</Text>
           <Text style={styles.profileEmail}>{email}</Text>
           <TouchableOpacity onPress={moveToEditProfile} activeOpacity={0.7}>
-            <Text style={styles.editProfile}>Edit Profile</Text>
+            <Text style={styles.editProfile}>{constantString.editProfile}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -155,7 +157,7 @@ const ProfileScreen = () => {
         <Text style={styles.footerText}>Powered By</Text>
         <Image
           style={styles.footerImage}
-          source={require('../assets/images/TechmangoLogo.png')}
+          source={constantImage.techmangoLogo}
         />
       </View> */}
     </View>

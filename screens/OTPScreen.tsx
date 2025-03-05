@@ -17,6 +17,9 @@ import {ResetPasswordResponseModel} from './types';
 const {width, height} = Dimensions.get('screen');
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { constantString } from '../utils/constantString';
+import { constantImage } from '../utils/images';
+import { apiConstants } from '../utils/appConstants';
 
 
 const OTPScreen: React.FC = () => {
@@ -33,10 +36,10 @@ const OTPScreen: React.FC = () => {
           if (otpData) {
             const {emailId} = JSON.parse(otpData);
             setEmail(emailId);
-            console.log('Email retrieved:', emailId);
+            console.log(constantString.emailRetrived, emailId);
           }
         } catch (error) {
-          console.log('Error fetching email:', error);
+          console.log(constantString.errorFetchingEmail, error);
         }
       };
   
@@ -47,7 +50,7 @@ const OTPScreen: React.FC = () => {
   const resendOTPApiCall = async () => {
     try {
       const response = await axios.get<ResetPasswordResponseModel>(
-        'https://pvbm.net:3000/api/v1/user/forgotPassword',
+        apiConstants.forgotPassword,
         {
           headers: {'Content-Type': 'application/json'},
           params: {
@@ -55,13 +58,13 @@ const OTPScreen: React.FC = () => {
           },
         },
       );
-      console.log('API Resend OTP Response:', response.data);
+      console.log(constantString.otpResendResponse, response.data);
 
       if (response.status === 200 || response.data.message === 'true') {
         Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: 'OTP resend sent successfully!',
+          type: constantString.success,
+          text1: constantString.success,
+          text2: constantString.otpResendSent,
         });
         setOtp('');
 
@@ -69,29 +72,29 @@ const OTPScreen: React.FC = () => {
           const resetEmailId = {
             emailId: emailId
           };
-          await AsyncStorage.setItem('ResetEmailId', JSON.stringify({emailId: emailId}));
+          await AsyncStorage.setItem(constantString.resetEmailId, JSON.stringify({emailId: emailId}));
         }
       } else {
         Toast.show({
-          type: 'error',
-          text1: 'Failed',
-          text2: response.data.message || 'Something went wrong',
+          type: constantString.error,
+          text1: constantString.failed,
+          text2: response.data.message || constantString.someThingWentWrong,
         });
       }
     } catch (error) {
-      console.log('API Resend OTP Error:', error);
+      console.log(constantString.otpResendError, error);
 
       if (axios.isAxiosError(error)) {
-        console.log('Error Response:', error.response?.data);
+        console.log(constantString.errorResponse, error.response?.data);
         Toast.show({
-          type: 'error',
-          text1: 'Error',
+          type: constantString.error,
+          text1: constantString.errorCaps,
           text2:
             error.response?.data?.message ||
-            'Something went wrong. Please try again later.',
+           constantString.someThingWentWrong,
         });
       } else {
-        Alert.alert('Error', 'Unexpected error occurred.');
+        Alert.alert(constantString.errorCaps, constantString.unexpectedError);
       }
     } finally {
     }
@@ -102,11 +105,9 @@ const OTPScreen: React.FC = () => {
   };
   return (
     <ImageBackground
-      source={require('../assets/images/BG.png')}
+      source={constantImage.bgBackGround} 
       style={styles.imgBackGround}>
-      <Text style={styles.lblTitle}>
-        Enter the verification code we just sent you on your email address
-      </Text>
+      <Text style={styles.lblTitle}>{constantString.otpText}</Text>
       <View style={styles.otpContainer}>
         <OtpInput
           numberOfDigits={4}
@@ -122,16 +123,16 @@ const OTPScreen: React.FC = () => {
         />
       </View>
       <View style={styles.container}>
-        <Text style={styles.infoText}>Didn't receive the code?</Text>
+        <Text style={styles.infoText}>{constantString.didNotReceiveTheCode}</Text>
         <TouchableOpacity style={styles.button} onPressIn={resendOTPApiCall}>
-          <Text style={styles.buttonText}>Re-send code</Text>
+          <Text style={styles.buttonText}>{constantString.reSendCode}</Text>
         </TouchableOpacity>
       </View>
       <TouchableOpacity
         style={[styles.continueButton, otp.length !== 4 && {opacity: 0.5}]}
         disabled={otp.length !== 4}
         onPressIn={moveToCreateNewPassword}>
-        <Text style={styles.continueText}>Continue</Text>
+        <Text style={styles.continueText}>{constantString.continue}</Text>
       </TouchableOpacity>
     </ImageBackground>
   );

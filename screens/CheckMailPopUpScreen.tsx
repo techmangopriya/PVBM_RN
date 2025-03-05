@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackNavigationProp } from '../App';
+import { constantString } from '../utils/constantString';
+import { constantImage } from '../utils/images';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -35,15 +37,13 @@ const CheckMailPopUpScreen: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.popViewContainer}>
         <Image
-          source={require('../assets/images/Message.png')}
+          source={constantImage.message}
           style={styles.image}
         />
-        <Text style={styles.baseText}>Check your mail</Text>
-        <Text style={styles.subText}>
-          We have sent a password recover instructions to your email.
-        </Text>
+        <Text style={styles.baseText}>{constantString.checkYourMail}</Text>
+        <Text style={styles.subText}>{constantString.recoverInstruction}</Text>
         <TouchableOpacity style={styles.closeButton} onPressIn={handleClose}>
-          <Text style={styles.closeText}>Close</Text>
+          <Text style={styles.closeText}>{constantString.close}</Text>
         </TouchableOpacity>
       </View>
     </View>

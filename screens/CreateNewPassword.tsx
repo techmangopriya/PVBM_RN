@@ -16,6 +16,9 @@ import {ResetPasswordResponseModel} from './types';
 const {width, height} = Dimensions.get('screen');
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { constantString } from '../utils/constantString';
+import { constantImage } from '../utils/images';
+import { apiConstants } from '../utils/appConstants';
 
 const CreateNewPassword: React.FC = () => {
   const navigation = useNavigation<RootStackNavigationProp<'passwordPopUp'>>();
@@ -32,10 +35,10 @@ const CreateNewPassword: React.FC = () => {
           if (resetEmailId) {
             const {emailId} = JSON.parse(resetEmailId);
             setEmail(emailId);
-            console.log('Email retrieved:', emailId);
+            console.log(constantString.emailRetrived, emailId);
           }
         } catch (error) {
-          console.log('Error fetching email:', error);
+          console.log(constantString.errorFetchingEmail, error);
         }
       };
       fetchResetEmailId();
@@ -44,25 +47,25 @@ const CreateNewPassword: React.FC = () => {
 
   const apiCallCreatePassword = async () => {
     if (password.length < 8) {
-      Alert.alert('Change Password', 'Password must be at least 8 characters');
+      Alert.alert(constantString.changePassword, constantString.passwordLength);
       return;
     }
 
     if (confirmPassword.length < 8) {
       Alert.alert(
-        'Change Password',
-        'Confirm Password must be at least 8 characters',
+        constantString.changePassword,
+        constantString.confirmPasswordLength,
       );
       return;
     }
 
     if (password != confirmPassword) {
-      Alert.alert('Change Password', "Confirm Password doesn't match");
+      Alert.alert(constantString.changePassword, constantString.confirmPasswordDoesnotMatch);
     }
 
     try {
       const response = await axios.patch<ResetPasswordResponseModel>(
-        'https://pvbm.net:3000/api/v1/user/changePassword',
+        apiConstants.changePassword,
         {
           emailId: emailId,
           password: password,
@@ -72,11 +75,11 @@ const CreateNewPassword: React.FC = () => {
         },
       );
 
-      console.log('API Change Password Response:', response.data);
+      console.log(constantString.aPIChangePasswordResponse, response.data);
       if (response.status === 200 || response.data.message === 'true') {
         Toast.show({
-          type: 'success',
-          text1: 'Success',
+          type: constantString.success,
+          text1: constantString.sucessCaps,
           text2: response.data.message || '',
         });
 
@@ -85,25 +88,25 @@ const CreateNewPassword: React.FC = () => {
         navigation.navigate('passwordPopUp');
       } else {
         Toast.show({
-          type: 'error',
-          text1: 'Change Password Failed',
-          text2: response.data.message || 'Invalid email',
+          type: constantString.error,
+          text1: constantString.changePasswordFailed,
+          text2: response.data.message || constantString.invalidEmail,
         });
       }
     } catch (error) {
-      console.log('API Change Password Error:', error);
+      console.log(constantString.aPIChangePasswordError, error);
 
       if (axios.isAxiosError(error)) {
-        console.log('Error Response:', error.response?.data);
+        console.log(constantString.errorResponse, error.response?.data);
         Toast.show({
-          type: 'error',
-          text1: 'Change Password Failed',
+          type: constantString.error,
+          text1: constantString.changePasswordFailed,
           text2:
             error.response?.data?.message ||
-            'Something went wrong. Please try again later.',
+            constantString.someThingWentWrong,
         });
       } else {
-        Alert.alert('Error', 'Unexpected error occurred.');
+        Alert.alert(constantString.errorCaps, constantString.unexpectedError);
       }
     } finally {
     }
@@ -111,23 +114,21 @@ const CreateNewPassword: React.FC = () => {
   return (
     <ImageBackground
       style={styles.imgBackGround}
-      source={require('../assets/images/BG.png')}>
+      source={constantImage.bgBackGround}>
       <View style={styles.baseViewStyle}>
-        <Text style={styles.forgetText}>
-          Your new password must be different from previously used passwords.
-        </Text>
+        <Text style={styles.forgetText}>{constantString.changePasswordText} </Text>
 
         <View style={styles.inputWrapper}>
           <TextInput
             style={styles.passwordInput}
-            placeholder="Password"
+            placeholder={constantString.password}
             placeholderTextColor="#838795"
             value={password}
             onChangeText={setPassword}
           />
           <TextInput
             style={styles.confirmPasswordInput}
-            placeholder="New Password"
+            placeholder={constantString.newPassword}
             placeholderTextColor="#838795"
             value={confirmPassword}
             onChangeText={setConfirmPassword}
@@ -137,7 +138,7 @@ const CreateNewPassword: React.FC = () => {
           <TouchableOpacity
             style={styles.resetPasswordButton}
             onPress={apiCallCreatePassword}>
-            <Text style={styles.resetPasswordText}>Reset Password</Text>
+            <Text style={styles.resetPasswordText}>{constantString.resetPassword}</Text>
           </TouchableOpacity>
         </View>
       </View>

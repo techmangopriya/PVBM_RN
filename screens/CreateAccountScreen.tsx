@@ -18,6 +18,9 @@ import axios, {AxiosError} from 'axios';
 import {AppUser, LoginResponseModel} from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Toast} from 'react-native-toast-message/lib/src/Toast';
+import { constantString } from '../utils/constantString';
+import { constantImage } from '../utils/images';
+import { apiConstants, appConstants } from '../utils/appConstants';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -36,30 +39,30 @@ const CreateAccountScreen: React.FC = () => {
   const validatePhone = (phone: string): boolean => /^[0-9]{10}$/.test(phone);
 
   const registerUser = async () => {
-    if (!name) return Alert.alert('Create an Account', 'Enter Name');
+    if (!name) return Alert.alert(constantString.createAnAccount, constantString.enterName);
     if (password.length < 8)
       return Alert.alert(
-        'Create an Account',
-        'Enter Password with at least 8 characters',
+        constantString.createAnAccount,
+        constantString.passwordLength,
       );
     if (confirmPassword.length < 8)
       return Alert.alert(
-        'Create an Account',
-        'Enter Confirm Password with at least 8 characters',
+        constantString.createAnAccount,
+        constantString.confirmPasswordLength,
       );
     if (password !== confirmPassword)
-      return Alert.alert('Create an Account', "Confirm Password Doesn't match");
+      return Alert.alert(constantString.createAnAccount, constantString.confirmPasswordDoesnotMatch );
     if (!validateEmail(email))
-      return Alert.alert('Create an Account', 'Enter a valid Email');
+      return Alert.alert(constantString.createAnAccount, constantString.enterValidEmail);
     if (!validatePhone(mobile.trim()))
       return Alert.alert(
-        'Create an Account',
-        'Enter valid Mobile Number with at least 10 digits',
+        constantString.createAnAccount,
+        constantString.mobileLength,
       );
     if (!isSelected)
       return Alert.alert(
-        'Create an Account',
-        'Please accept the Terms and Conditions',
+        constantString.createAnAccount,
+        constantString.acceptTheTC,
       );
 
     try {
@@ -75,14 +78,14 @@ const CreateAccountScreen: React.FC = () => {
         },
       };
       const response = await axios.post<LoginResponseModel>(
-        'https://pvbm.net:3000/api/v1/user/register',
+        apiConstants.createAccount,
         parameters,
         {headers: {'Content-Type': 'application/json'}},
       );
-      console.log('API Create Account Response:', response.data);
+      console.log(constantString.aPICreateAccountResponse, response.data);
 
       if (response?.status == 200 || response.data?.message == 'true') {
-        Alert.alert('Success', response.data?.message || 'Login successful');
+        Alert.alert(constantString.sucessCaps, response.data?.message || constantString.accountCreatedSuccessful);
 
         if (response.data.accessToken) {
           const userDetails = {
@@ -96,49 +99,49 @@ const CreateAccountScreen: React.FC = () => {
         navigation.navigate('homeScreen');
       } else {
         Toast.show({
-          type: 'error',
-          text1: 'Create Account Failed',
-          text2: response?.data?.message || 'Invalid credentials',
+          type: constantString.error,
+          text1: constantString.createAccountFailed,
+          text2: response?.data?.message ||  constantString.invalidCredentials,
         });
       }
     } catch (error) {
-      console.log('API Create Account Error:', error);
+      console.log(constantString.aPICreateAccountError, error);
 
       if (axios.isAxiosError(error)) {
-        console.log('Error Response:', error.response?.data);
+        console.log(constantString.errorResponse, error.response?.data);
         Toast.show({
-          type: 'error',
-          text1: 'Error',
+          type: constantString.error,
+          text1: constantString.errorCaps,
           text2:
             error.response?.data?.message ||
-            'Something went wrong. Please try again later.',
+            constantString.someThingWentWrong,
         });
       } else {
-        Alert.alert('Error', 'Unexpected error occurred.');
+        Alert.alert(constantString.errorCaps, constantString.unexpectedError);
       }
     } finally {
     }
   };
   const openURL = (url: string) => {
-    Linking.openURL(url).catch(err => console.error("Couldn't open URL", err));
+    Linking.openURL(url).catch(err => console.error(constantString.couldnotOpenUrl, err));
   };
 
   return (
     <ScrollView>
       <ImageBackground
         style={styles.imgBackGround}
-        source={require('../assets/images/BG.png')}>
+        source={constantImage.bgBackGround}>
         <View style={styles.inputWrapper}>
           <TextInput
             style={styles.nameInput}
-            placeholder="Name"
+            placeholder={constantString.name}
             placeholderTextColor="#838795"
             value={name}
             onChangeText={setName}
           />
           <TextInput
             style={styles.nameInput}
-            placeholder="Password"
+            placeholder={constantString.password}
             placeholderTextColor="#838795"
             secureTextEntry
             value={password}
@@ -146,7 +149,7 @@ const CreateAccountScreen: React.FC = () => {
           />
           <TextInput
             style={styles.nameInput}
-            placeholder="Confirm Password"
+            placeholder={constantString.confirmPassword}
             placeholderTextColor="#838795"
             secureTextEntry
             value={confirmPassword}
@@ -154,7 +157,7 @@ const CreateAccountScreen: React.FC = () => {
           />
           <TextInput
             style={styles.nameInput}
-            placeholder="Email"
+            placeholder={constantString.email}
             placeholderTextColor="#838795"
             keyboardType="email-address"
             value={email}
@@ -162,7 +165,7 @@ const CreateAccountScreen: React.FC = () => {
           />
           <TextInput
             style={styles.nameInput}
-            placeholder="Mobile no"
+            placeholder={constantString.mobileNo}
             placeholderTextColor="#838795"
             keyboardType="phone-pad"
             value={mobile}
@@ -176,30 +179,28 @@ const CreateAccountScreen: React.FC = () => {
               onClick={() => setSelection(!isSelected)}
               checkBoxColor="#7559CC"
             />
-            <Text style={styles.label}>
-              I hereby agree to Terms and Conditions and Privacy Policy
-            </Text>
+            <Text style={styles.label}>{constantString.agreeText} </Text>
           </View>
 
           <View style={styles.linkContainer}>
             <TouchableOpacity
               onPressIn={() =>
                 navigation.navigate('webPage', {
-                  url: 'https://pvbm.net/terms-condition',
-                  title: 'Terms & Conditions',
+                  url: appConstants.termsUrl,
+                  title: constantString.termsAndConditions
                 })
               }>
-              <Text style={styles.linkText}>Terms & Conditions</Text>
+              <Text style={styles.linkText}>{constantString.termsAndConditions}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPressIn={() =>
                 navigation.navigate('webPage', {
-                  url: 'https://pvbm.net/privacy-policy',
-                  title: 'Privacy Policy',
+                  url: appConstants.privacyUrl,
+                  title: constantString.privacyPolicy,
                 })
               }>
-              <Text style={styles.linkText}>Privacy Policy</Text>
+              <Text style={styles.linkText}>{constantString.privacyPolicy}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -209,7 +210,7 @@ const CreateAccountScreen: React.FC = () => {
             style={styles.submitButton}
             onPressIn={registerUser}
             activeOpacity={0.7}>
-            <Text style={styles.submitText}>Submit</Text>
+            <Text style={styles.submitText}>{constantString.submit}</Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>

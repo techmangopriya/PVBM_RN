@@ -16,7 +16,9 @@ import axios, {AxiosError} from 'axios';
 import {LoginResponseModel, ResetPasswordResponseModel} from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-
+import { constantString } from '../utils/constantString';
+import { constantImage } from '../utils/images';
+import { apiConstants } from '../utils/appConstants';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -33,16 +35,16 @@ const ResetPasswordScreen: React.FC = ({}) => {
   const resetPasswordapiCall = async () => {
 
     if (emailId.trim() === '') {
-      Alert.alert('Reset Password', 'Email Cannot be empty')
+      Alert.alert(constantString.resetPassword, constantString.emailEmpty)
       return;
     }
     if (!validateEmail(emailId)) {
-      Alert.alert('Reset Password', 'Enter a Valid email');
+      Alert.alert(constantString.resetPassword, constantString.enterValidEmail);
       return;
     }
     try {
       const response = await axios.get<ResetPasswordResponseModel>(
-        'https://pvbm.net:3000/api/v1/user/forgotPassword', 
+        apiConstants.forgotPassword, 
         {
           headers: {'Content-Type': 'application/json'},
           params: {
@@ -51,13 +53,13 @@ const ResetPasswordScreen: React.FC = ({}) => {
         }
       );
 
-      console.log('API Reset Response:', response.data);
+      console.log(constantString.apiResetResponse, response.data);
 
       if (response.status === 200 || response.data.message === 'true') {
         Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: 'Password reset email sent successfully!',
+          type: constantString.success,
+          text1: constantString.sucessCaps,
+          text2: constantString.passwordSuccessfully,
         });
 
         if (response.data.data) {
@@ -70,24 +72,24 @@ const ResetPasswordScreen: React.FC = ({}) => {
         navigation.navigate('checkMailPopUp');
       } else {
         Toast.show({
-          type: 'error',
-          text1: 'Failed',
-          text2: response.data.message || 'Something went wrong',
+          type: constantString.error,
+          text1: constantString.failed,
+          text2: response.data.message || constantString.someThingWentWrong,
         });
       }
     } catch (error) {
-      console.log('API Reset Error:', error);
+      console.log(constantString.apiResetError, error);
 
       if (axios.isAxiosError(error)) {
-        console.log('Error Response:', error.response?.data);
+        console.log(constantString.errorResponse, error.response?.data);
         Toast.show({
-          type: 'error',
-          text1: 'Error',
+          type: constantString.error,
+          text1: constantString.errorCaps,
           text2: error.response?.data?.message ||
-          'Something went wrong. Please try again later.'
+          constantString.someThingWentWrong
         })
       } else {
-        Alert.alert('Error', 'Unexpected error occurred.');
+        Alert.alert(constantString.errorCaps, constantString.unexpectedError);
       }
     } finally {
     }
@@ -96,17 +98,14 @@ const ResetPasswordScreen: React.FC = ({}) => {
   return (
     <ImageBackground
       style={styles.imgBackGround}
-      source={require('../assets/images/BG.png')}>
+      source={constantImage.bgBackGround}>
       <View style={styles.baseView}>
-        <Text style={styles.textStyle}>
-          Lost Your Password? Please enter your email will receive a link to
-          create a new password via email.
-        </Text>
+        <Text style={styles.textStyle}>{constantString.resetPasswordText}</Text>
 
         <View style={styles.inputWrapper}>
           <TextInput
             style={styles.inputContainer}
-            placeholder="Email"
+            placeholder={constantString.email}
             placeholderTextColor="#838795"
             keyboardType="email-address"
             value={emailId}
@@ -118,7 +117,7 @@ const ResetPasswordScreen: React.FC = ({}) => {
             style={styles.resetPasswordButton}
             onPress={resetPasswordapiCall}
             activeOpacity={0.7}>
-            <Text style={styles.resetPasswordText}>Reset Password</Text>
+            <Text style={styles.resetPasswordText}>{constantString.resetPassword}</Text>
           </TouchableOpacity>
         </View>
       </View>

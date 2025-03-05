@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {
@@ -27,6 +20,9 @@ import DeviceInfo from 'react-native-device-info';
 import {LoginResponseModel} from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import { constantString } from '../utils/constantString';
+import { constantImage } from '../utils/images';
+import { apiConstants } from '../utils/appConstants';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -37,7 +33,7 @@ const LoginScreen: React.FC = () => {
   const [password, setPassword] = useState<string>('12345677');
   const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
-  const [id,setId] = useState<string>('67af19359c7bab2e36b7a085');
+  const [id,setId] = useState<string>('');
 
   const validateEmail = (email: string) => {
     const emailRegex = /\S+@\S+\.\S+/;
@@ -46,17 +42,16 @@ const LoginScreen: React.FC = () => {
 
   const handleLogin = async () => {
     if (!validateEmail(email)) {
-      Alert.alert('Login Error', 'Enter a valid email');
+      Alert.alert(constantString.loginError, constantString.enterValidEmail);
       return;
     }
 
     if (password.length < 8) {
-      Alert.alert('Login Error', 'Password must be at least 8 characters long');
+      Alert.alert(constantString.loginError, constantString.passwordLength);
       return;
     }
-
     setLoading(true);
-
+    
     try {
       const deviceModel = DeviceInfo.getModel();
       const systemVersion = DeviceInfo.getSystemVersion();
@@ -73,18 +68,18 @@ const LoginScreen: React.FC = () => {
         },
       };
       const response = await axios.post<LoginResponseModel>(
-        'https://pvbm.net:3000/api/v1/user/login',
+        apiConstants.login,
         parameters,
         {headers: {'Content-Type': 'application/json'}},
       );
 
-      console.log('API Login Response:', response.data);
+      console.log(constantString.apiLoginResponse, response.data);
 
       if (response?.status == 200 || response.data?.message === 'true') {
         Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: response.data?.message || 'Login successful',
+          type: constantString.success,
+          text1: constantString.sucessCaps,
+          text2: response.data?.message || constantString.loginSuccessful
         });
         if (response.data.accessToken) {
           const userDetails = {
@@ -99,24 +94,24 @@ const LoginScreen: React.FC = () => {
         navigation.navigate('homeScreen');
       } else {
         Toast.show({
-          type: 'success',
-          text1: 'Login Failed',
-          text2: response.data?.message || 'Invalid credentials',
+          type: constantString.success,
+          text1: constantString.loginFailed,
+          text2: response.data?.message || constantString.invalidCredentials,
         });
       }
     } catch (error) {
-      console.log('API Login Error:', error);
+      console.log(constantString.apiLoginError, error);
 
       if (axios.isAxiosError(error)) {
-        console.log('Error Response:', error.response?.data);
+        console.log(constantString.errorResponse, error.response?.data);
         Toast.show({
-          type: 'Error',
-          text1: 'Login Failed',
+          type: constantString.error,
+          text1: constantString.loginFailed,
           text2: error.response?.data?.message ||
-          'Something went wrong. Please try again later.',
+          constantString.someThingWentWrong,
         });
       } else {
-        Alert.alert('Error', 'Unexpected error occurred.');
+        Alert.alert(constantString.error, constantString.unexpectedError);
       }
     } finally {
       setLoading(false);
@@ -141,7 +136,7 @@ const LoginScreen: React.FC = () => {
         <ScrollView>
           <ImageBackground
             style={styles.imgBackGround}
-            source={require('../assets/images/BG.png')}>
+            source={constantImage.bgBackGround}>
             <View
               style={{
                 flex: 1,
@@ -151,17 +146,17 @@ const LoginScreen: React.FC = () => {
               }}>
               <Image
                 style={styles.logo}
-                source={require('../assets/images/logo.png')}
+                source={constantImage.logo}
               />
             </View>
 
             <View style={styles.container}>
               <View style={styles.loginContainer}>
-                <Text style={styles.loginTitle}>Login</Text>
+                <Text style={styles.loginTitle}>{constantString.login}</Text>
 
                 <TextInput
                   style={styles.input}
-                  placeholder="Email"
+                  placeholder={constantString.email}
                   placeholderTextColor="#aaa"
                   value={email}
                   onChangeText={setEmail}
@@ -171,7 +166,7 @@ const LoginScreen: React.FC = () => {
                 <View style={styles.passwordContainer}>
                   <TextInput
                     style={styles.passwordInput}
-                    placeholder="Password"
+                    placeholder={constantString.password}
                     placeholderTextColor="#aaa"
                     value={password}
                     onChangeText={setPassword}
@@ -186,23 +181,21 @@ const LoginScreen: React.FC = () => {
                 <TouchableOpacity>
                   <Text
                     style={styles.forgotPassword}
-                    onPress={moveToResetScreen}>
-                    Forgot Password?
-                  </Text>
+                    onPress={moveToResetScreen}>{constantString.forgotPassword}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={styles.signInButton}
                   onPress={handleLogin}>
-                  <Text style={styles.signInText}>Sign in</Text>
+                  <Text style={styles.signInText}>{constantString.signIn}</Text>
                 </TouchableOpacity>
 
                 <View style={styles.createAccountContainer}>
                   <Text style={styles.createAccount}>
-                    Don't have an account?{' '}
+                   {constantString.dontHaveAccount}{' '}
                   </Text>
                   <TouchableOpacity onPress={moveToAccountScreen}>
-                    <Text style={styles.createAccountLink}>Create Account</Text>
+                    <Text style={styles.createAccountLink}>{constantString.createAccount}</Text>
                   </TouchableOpacity>
                 </View>
               </View>

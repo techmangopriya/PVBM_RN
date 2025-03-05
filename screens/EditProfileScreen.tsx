@@ -12,6 +12,9 @@ import axios from 'axios';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import { RootStackNavigationProp } from '../App';
+import { constantString } from '../utils/constantString';
+import { constantImage } from '../utils/images';
+import { apiConstants } from '../utils/appConstants';
 
 type EditProfileParams = {
   name: string;
@@ -41,7 +44,7 @@ const EditProfileScreen: React.FC = () => {
 
     try {
       const response = await axios.patch(
-        'https://pvbm.net:3000/api/v1/user/update',
+       apiConstants.updateProfile,
         {
           id: userId,
           name: userName,
@@ -51,28 +54,28 @@ const EditProfileScreen: React.FC = () => {
           headers: { 'Content-Type': 'application/json' },
         }
       );
-      console.log('API Edit Profile Response:', response.data);
+      console.log(constantString.apiEditProfileResponse, response.data);
       if (response.status === 200 || response.data.message === 'true') {
         Toast.show({
-          type: 'success',
-          text1: 'Success',
+          type: constantString.success,
+          text1: constantString.sucessCaps,
           text2: response.data.message || '',
         });
         
        navigation.navigate('editProfilePopup');
       } else {
         Toast.show({
-          type: 'error',
-          text1: 'Edit Profile Failed',
-          text2: response.data.message || 'Invalid data',
+          type: constantString.error,
+          text1: constantString.editProfileFailed,
+          text2: response.data.message || constantString.invalidCredentials,
         });
       }
     } catch (error) {
-      console.log('API Edit Profile Error:', error);
+      console.log(constantString.editProfileFailed, error);
       Toast.show({
-        type: 'error',
-        text1: 'Edit Profile Failed',
-        text2: 'Something went wrong. Please try again later.',
+        type: constantString.error,
+        text1: constantString.editProfileFailed,
+        text2: constantString.someThingWentWrong,
       });
     }
   };
@@ -80,16 +83,16 @@ const EditProfileScreen: React.FC = () => {
   return (
     <ScrollView>
       <ImageBackground
-        source={require('../assets/images/BG.png')}
+        source={constantImage.bgBackGround}
         style={styles.imgBackGround}>
-        <Text style={styles.nameText}>Name</Text>
+        <Text style={styles.nameText}>{constantString.name}</Text>
         <TextInput
           style={styles.nameInput}
           value={userName}
           onChangeText={setUserName}
         />
 
-        <Text style={styles.nameText}>Email</Text>
+        <Text style={styles.nameText}>{constantString.email}</Text>
         <TextInput
           editable={false}
           style={styles.emailInput}
@@ -97,7 +100,7 @@ const EditProfileScreen: React.FC = () => {
 
         />
 
-        <Text style={styles.nameText}>Mobile No</Text>
+        <Text style={styles.nameText}>{constantString.mobileNo}</Text>
         <TextInput
           style={styles.nameInput}
           value={userMobile}
@@ -108,7 +111,7 @@ const EditProfileScreen: React.FC = () => {
         <TouchableOpacity style={styles.updateProfileButton} 
          onPress={updateProfileApiCall}
         >
-          <Text style={styles.updateProfileText}>Update Profile</Text>
+          <Text style={styles.updateProfileText}>{constantString.updateProfile}</Text>
         </TouchableOpacity>
       </ImageBackground>
     </ScrollView>

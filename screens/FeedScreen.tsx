@@ -1,59 +1,102 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, ActivityIndicator , RefreshControl } from 'react-native';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackNavigationProp } from '../App';
 import { LibraryResponseModel, Library } from './LibraryResponseModel';
 import { format } from 'date-fns';
+import { constantImage } from '../utils/images';
+import { constantString } from '../utils/constantString';
+import { apiConstants } from '../utils/appConstants';
 
-const videoIcon = require('../assets/images/ic_video_icon.png');
-const audioIcon = require('../assets/images/ic_audio_icon.png');
+const videoIcon = constantImage.videoIcon;
+const audioIcon = constantImage.audioIcon;
+const docIcon = constantImage.docIcon;
+
 
 const FeedScreen: React.FC = () => {
   const navigation = useNavigation<RootStackNavigationProp<'homeScreen'>>();
   const [feedData, setFeedData] = useState<Library[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const fetchFeedList = async () => {
+  const [page, setPage] = useState(0);
+  const [hasMoreData, setHasMoreData] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchFeedList = async (isLoadMore = false, isRefresh = false) => {
+    if (isLoadMore && !hasMoreData) return;
+  
+    if (isRefresh) {
+      setPage(0);           
+      setHasMoreData(true); 
+      setFeedData([]);     
+    }
+  
     setLoading(true);
+  
     try {
       const response = await axios.post<LibraryResponseModel>(
-        'https://pvbm.net:3000/api/v1/user/feeds',
-        {},
+        apiConstants.feeds,
+        {
+          page: isRefresh ? 0 : page,
+          size: 50,
+          version: feedData.length > 0 ? feedData[0].id : 0,
+        },
         {
           headers: { 'Content-Type': 'application/json' },
         }
       );
-
+  
       if (response.status === 200 && response.data.data?.docs) {
-        setFeedData(response.data.data.docs);
+        const newDocs = response.data.data.docs;
+  
+        if (newDocs.length > 0) {
+          setFeedData(isLoadMore ? [...feedData, ...newDocs] : newDocs);
+          setPage((prevPage) => prevPage + 1);
+        }
+  
+        if (newDocs.length < 10) {
+          setHasMoreData(false);
+        }
       } else {
         Toast.show({
-          type: 'error',
-          text1: 'Failed',
-          text2: response.data.message || 'Something went wrong',
+          type: constantString.error,
+          text1: constantString.failed,
+          text2: response.data.message || constantString.someThingWentWrong,
         });
       }
     } catch (error) {
       console.log('API Error:', error);
       Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Something went wrong. Please try again later.',
+        type: constantString.error,
+        text1: constantString.errorCaps,
+        text2: constantString.someThingWentWrong,
       });
     } finally {
       setLoading(false);
+      if (isRefresh) setRefreshing(false);
     }
   };
-
+  
   useEffect(() => {
     fetchFeedList();
   }, []);
+  
+  const handleLoadMore = () => {
+    if (!loading && hasMoreData) {
+      fetchFeedList(true);
+    }
+  };
 
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return 'No Date'; 
     return format(new Date(dateString), 'dd/MM/yyyy HH:mm');
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchFeedList(false, true);
   };
 
   const renderItem = ({ item }: { item: Library }) => (
@@ -95,6 +138,11 @@ const FeedScreen: React.FC = () => {
           data={feedData}
           keyExtractor={(item) => item.id || item.toString()}
           renderItem={renderItem}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5} 
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         />
       )}
     </View>
@@ -124,7 +172,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   textContainer: {
     flex: 1,
@@ -165,13 +213,16 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   thumbImage: {
-    height: 100,
-    width: 100,
     borderRadius: 10,
-    resizeMode: 'cover'
+    resizeMode: 'cover',
+    height: 120,
+    width: 120,
   },
   thumbContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
   },
 });
 
