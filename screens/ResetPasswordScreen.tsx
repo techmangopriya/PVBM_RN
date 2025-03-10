@@ -13,7 +13,7 @@ import {
 import {TextInput} from 'react-native-gesture-handler';
 import {RootStackNavigationProp} from '../App';
 import axios, {AxiosError} from 'axios';
-import {LoginResponseModel, ResetPasswordResponseModel} from './types';
+import {LoginResponseModel, ResetPasswordResponseModel} from '../model/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import { constantString } from '../utils/constantString';

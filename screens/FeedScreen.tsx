@@ -4,7 +4,7 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackNavigationProp } from '../App';
-import { LibraryResponseModel, Library } from './LibraryResponseModel';
+import { LibraryResponseModel, Library } from '../model/LibraryResponseModel';
 import { format } from 'date-fns';
 import { constantImage } from '../utils/images';
 import { constantString } from '../utils/constantString';
@@ -13,7 +13,6 @@ import { apiConstants } from '../utils/appConstants';
 const videoIcon = constantImage.videoIcon;
 const audioIcon = constantImage.audioIcon;
 const docIcon = constantImage.docIcon;
-
 
 const FeedScreen: React.FC = () => {
   const navigation = useNavigation<RootStackNavigationProp<'homeScreen'>>();
@@ -67,7 +66,7 @@ const FeedScreen: React.FC = () => {
         });
       }
     } catch (error) {
-      console.log('API Error:', error);
+      console.log(constantString.apiError, error);
       Toast.show({
         type: constantString.error,
         text1: constantString.errorCaps,
@@ -130,7 +129,7 @@ const FeedScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Feed</Text>
+      <Text style={styles.header}>{constantString.feeds}</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff"/>
       ) : (

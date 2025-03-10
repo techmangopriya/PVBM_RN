@@ -12,15 +12,14 @@ import {OtpInput} from 'react-native-otp-entry';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {RootStackNavigationProp} from '../App';
 import axios from 'axios';
-import {ResetPasswordResponseModel} from './types';
-
-const {width, height} = Dimensions.get('screen');
+import {ResetPasswordResponseModel} from '../model/types';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { constantString } from '../utils/constantString';
 import { constantImage } from '../utils/images';
 import { apiConstants } from '../utils/appConstants';
 
+const {width, height} = Dimensions.get('screen');
 
 const OTPScreen: React.FC = () => {
   const navigation =

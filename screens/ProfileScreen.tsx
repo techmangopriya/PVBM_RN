@@ -15,7 +15,7 @@ import {RootStackNavigationProp} from '../App';
 import {ScrollView} from 'react-native-gesture-handler';
 import axios,{AxiosError} from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppUser } from './types';
+import { AppUser } from '../model/types.tsx';
 import { useFocusEffect } from '@react-navigation/native';
 import { useIsFocused } from '@react-navigation/native';
 import { constantString } from '../utils/constantString';

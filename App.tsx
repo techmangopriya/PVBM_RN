@@ -37,6 +37,7 @@ import PasswordCreatedPopUpScreen from './screens/PasswordCreatedPopUpScreen';
 import EditPopUpScreen from './screens/EditPopUpScreen';
 import EditProfileScreen from './screens/EditProfileScreen';
 import { constantImage } from './utils/images';
+import AudioDetailScreen from './screens/AudioDetailScreen';
 
 type RootStackParamList = {
   login: undefined;
@@ -51,6 +52,7 @@ type RootStackParamList = {
   otpEntry: undefined;
   passwordPopUp: undefined;
   editProfilePopup : undefined;
+  audioDetail: undefined;
 };
 
 export type RootStackNavigationProp<T extends keyof RootStackParamList> =
@@ -212,6 +214,14 @@ const App: React.FC = () => {
             headerShown: false,
             headerBackTitle: '',
             headerTintColor: 'black',
+          }}
+          />
+
+          <Stack.Screen
+          name='audioDetail'
+          component={AudioDetailScreen}
+          options={{
+            title: "Audio",
           }}
           />
           

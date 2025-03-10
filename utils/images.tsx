@@ -1,6 +1,6 @@
 export const constantImage = {
-  bgBackGround: require('../assets/images/bgBackGround.png'),
-  tickSquare: require('../assets/images/tickSquare.png'),
+  bgBackGround: require('../assets/images/BG.png'),
+  tickSquare: require('../assets/images/TickSquare.png'),
   message: require('../assets/images/Message.png'),
   logo: require('../assets/images/logo.png'),
   password: require('../assets/images/Password.png'),
@@ -19,4 +19,6 @@ export const constantImage = {
   libraryIcon: require('../assets/images/ic_Library.png'),
   feedIcon: require('../assets/images/Play.png'),
   profileIcon: require('../assets/images/Profile.png'),
+  catAudioIcon: require('../assets/images/cat_audio.png'),
+  catVideoIcon: require('../assets/images/cat_video.png'),
 };

@@ -9,6 +9,7 @@ export const constantString = {
   name: 'Name',
   confirmPassword: 'Confirm Password',
   loginError: 'Login Error',
+  apiError: 'API Error:',
   enterValidEmail: 'Enter a valid email',
   confirmPasswordLength: 'Confirm Password must be at least 8 characters',
   confirmPasswordDoesnotMatch: "Confirm Password Doesn't match",
@@ -87,4 +88,6 @@ export const constantString = {
   emailEmpty: 'Email Cannot be empty',
   apiResetResponse: 'API Reset Response:',
   enterName: 'Enter Name',
+  library: 'Library',
+  feeds: 'Feeds',
 };

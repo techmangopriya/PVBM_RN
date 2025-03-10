@@ -17,7 +17,7 @@ import {KeyboardAvoidingView, Platform} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import axios, {AxiosError} from 'axios';
 import DeviceInfo from 'react-native-device-info';
-import {LoginResponseModel} from './types';
+import {LoginResponseModel} from '../model/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { constantString } from '../utils/constantString';

@@ -12,7 +12,7 @@ import {
 import axios, {AxiosError} from 'axios';
 import {RootStackNavigationProp} from '../App';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {ResetPasswordResponseModel} from './types';
+import {ResetPasswordResponseModel} from '../model/types';
 const {width, height} = Dimensions.get('screen');
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';

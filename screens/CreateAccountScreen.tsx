@@ -15,7 +15,7 @@ import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import CheckBox from 'react-native-check-box';
 import {RootStackNavigationProp} from '../App';
 import axios, {AxiosError} from 'axios';
-import {AppUser, LoginResponseModel} from './types';
+import {AppUser, LoginResponseModel} from '../model/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Toast} from 'react-native-toast-message/lib/src/Toast';
 import { constantString } from '../utils/constantString';
