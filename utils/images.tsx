@@ -21,4 +21,8 @@ export const constantImage = {
   profileIcon: require('../assets/images/Profile.png'),
   catAudioIcon: require('../assets/images/cat_audio.png'),
   catVideoIcon: require('../assets/images/cat_video.png'),
+  playIcon: require('../assets/images/ic_play.png'),
+  pauseIcon: require('../assets/images/ic_pause.png'),
+  rewindIcon: require('../assets/images/ic_rewind.png'),
+  forwardIcon: require('../assets/images/ic_forward.png'),
 };

@@ -38,6 +38,8 @@ import EditPopUpScreen from './screens/EditPopUpScreen';
 import EditProfileScreen from './screens/EditProfileScreen';
 import { constantImage } from './utils/images';
 import AudioDetailScreen from './screens/AudioDetailScreen';
+import VideoDetailScreen from './screens/VideoDetailScreen';
+import { LibraryResponseModel,Library } from './model/LibraryResponseModel';
 
 type RootStackParamList = {
   login: undefined;
@@ -52,7 +54,8 @@ type RootStackParamList = {
   otpEntry: undefined;
   passwordPopUp: undefined;
   editProfilePopup : undefined;
-  audioDetail: undefined;
+  audioDetail:{ item: Library };
+  videoDetail: {item: Library};
 };
 
 export type RootStackNavigationProp<T extends keyof RootStackParamList> =
@@ -222,6 +225,14 @@ const App: React.FC = () => {
           component={AudioDetailScreen}
           options={{
             title: "Audio",
+          }}
+          />
+
+          <Stack.Screen
+          name='videoDetail'
+          component={VideoDetailScreen}
+          options={{
+            title:'Video',
           }}
           />
           

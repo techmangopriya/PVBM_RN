@@ -22,7 +22,7 @@ export interface LibraryList {
 
 export interface Library {
   id?: string;
-  categoryID?: CategoryID;
+  categoryId?: CategoryID;
   docDescription?: string;
   contentType?: LibraryContentType;
   url: string;
@@ -31,6 +31,11 @@ export interface Library {
   fileDetails?: FileDetail;
   title?: string;
   updatedAt?: string;
+  description: string;
+}
+
+export interface LibraryObj {
+  item: Library;
 }
 
 export type LibraryContentType = 'video' | 'audio' | 'doc';

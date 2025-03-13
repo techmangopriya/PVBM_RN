@@ -19,6 +19,7 @@ import {
 } from '../model/CategoryListResponseModel';
 import {useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import { Library } from '../model/LibraryResponseModel';
 
 const categories = ['Categories', 'Videos', 'Audios', 'Documents'];
 
@@ -72,7 +73,9 @@ const HomeScreen: React.FC = () => {
 
   const moveToAudioDetailPage = (item: any) => {
     if (selectedCategory === 'Audios') {
-    navigation.navigate('audioDetail');
+    navigation.navigate('audioDetail', item);
+    } else if (selectedCategory === 'Videos') {
+      navigation.navigate('videoDetail', item);
     }
   };
 
@@ -250,8 +253,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   cardImage: {
-    width: 50,
-    height: 50,
+    width: 80,
+    height: 80,
     borderRadius: 25,
     marginRight: 10,
   },

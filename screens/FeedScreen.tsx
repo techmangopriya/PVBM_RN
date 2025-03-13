@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, ActivityIndicator , RefreshControl } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, ActivityIndicator , RefreshControl, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
@@ -23,6 +23,24 @@ const FeedScreen: React.FC = () => {
   const [hasMoreData, setHasMoreData] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+
+  const moveToDetailPage = (item:Library) => {
+    if (item.contentType === 'audio') {
+       navigation.navigate('audioDetail',{ item: item })
+    } else if (item.contentType === 'video') {
+      navigation.navigate('videoDetail', {item: item});
+    }
+  }
+
+  const getImageSource = (feed: Library) => {
+    if (feed.categoryId?.icon) {
+      return { uri: feed.categoryId.icon };
+    } else if (feed.thumbnailImage) {
+      return { uri: feed.thumbnailImage };
+    }
+    return docIcon;
+  };
+  
   const fetchFeedList = async (isLoadMore = false, isRefresh = false) => {
     if (isLoadMore && !hasMoreData) return;
   
@@ -90,7 +108,7 @@ const FeedScreen: React.FC = () => {
 
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return 'No Date'; 
-    return format(new Date(dateString), 'dd/MM/yyyy HH:mm');
+    return format(new Date(dateString), 'MMM d, yyyy');
   };
 
   const onRefresh = () => {
@@ -99,17 +117,18 @@ const FeedScreen: React.FC = () => {
   };
 
   const renderItem = ({ item }: { item: Library }) => (
+    <TouchableOpacity onPress={() => moveToDetailPage(item)}>
     <View style={styles.card}>
       <View style={styles.headerContainer}>
         <View style={styles.textContainer}>
           <Text style={styles.title}>{item.title}</Text>
           <Text style={styles.category}>
-            {item.categoryID?.name ? item.categoryID.name : 'No Category'}
+            {item.categoryId?.name ? item.categoryId.name : 'No Category'}
           </Text>
         </View>
         <View style={styles.thumbContainer}>
           <Image
-            source={item.thumbnailImage ? { uri: item.thumbnailImage } : videoIcon}
+            source={getImageSource(item)}
             style={styles.thumbImage}
           />
         </View>
@@ -125,6 +144,7 @@ const FeedScreen: React.FC = () => {
         </View>
       </View>
     </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -195,7 +215,7 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 14,
-    color: '#999',
+    color: 'black',
   },
   typeContainer: {
     flexDirection: 'row',
